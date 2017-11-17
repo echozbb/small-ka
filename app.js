@@ -5,10 +5,10 @@ https://aka.ms/abs-node-proactive
 "use strict";
 // require('launch-json');
 var builder = require("botbuilder");
-//ar botbuilder_azure = require("botbuilder-azure");
-//var azure = require('azure-storage');
+var botbuilder_azure = require("botbuilder-azure");
+var azure = require('azure-storage');
 var path = require('path');
-//var winston = require('winston');
+var winston = require('winston');
 
 //var Domain = require('./domain');
 //var Luis = require('./luis-service');
@@ -19,37 +19,37 @@ var cognitiveservices = require('botbuilder-cognitiveservices');
 const default_locale = 'zh-Hans';
 var useEmulator = (process.env.BotEnv == 'development');
 
-// // if(process.env.BotEnv == 'prod') {
-// //     require("winston-azure-blob-transport");    
-// //     function toDateStr(number) {
-// //         return number < 10?  "0" + number.toString() : number.toString();        
-// //     }   
-// //     var d = new Date();
-// //     var datePath = d.getUTCFullYear() + "-" +toDateStr(d.getUTCMonth()+1) + "-" + toDateStr(d.getUTCDate()) + "/" + toDateStr(d.getUTCHours()) + "-" + toDateStr(d.getUTCMinutes());
-// //     global._logger = new (winston.Logger)({
-// //         transports: [
-// //             new (winston.transports.AzureBlob)({    
-// //             account: {
-// //                 name: "cozitripchatbot",
-// //                 key: "/XtqnGbTT49mrDkRJC5JQ3ds1Urwmd5ukdBIgAK8/bWbcAK9sGBiwJz7dWzmGgTvVtf38YN7DXB9MyPSyHYa+g=="
-// //             },
-// //             containerName: "chatbotlogs",
-// //             blobName: "logs/" + datePath + "----" + require('uuid/v4')().substring(0,10) + ".log",
-// //             level: "info"
-// //             })
-// //         ]
-// //     });
-// //     //global._logger = winston;
-// //     global._logger.info("Logging in production");    
-// // } else {
-// //     global._logger = winston;
-// //     global._logger.info('logging not in production');
-// // }
+if(process.env.BotEnv == 'prod') {
+    require("winston-azure-blob-transport");    
+    function toDateStr(number) {
+        return number < 10?  "0" + number.toString() : number.toString();        
+    }   
+    var d = new Date();
+    var datePath = d.getUTCFullYear() + "-" +toDateStr(d.getUTCMonth()+1) + "-" + toDateStr(d.getUTCDate()) + "/" + toDateStr(d.getUTCHours()) + "-" + toDateStr(d.getUTCMinutes());
+    global._logger = new (winston.Logger)({
+        transports: [
+            new (winston.transports.AzureBlob)({    
+            account: {
+                name: "cozitripchatbot",
+                key: "/XtqnGbTT49mrDkRJC5JQ3ds1Urwmd5ukdBIgAK8/bWbcAK9sGBiwJz7dWzmGgTvVtf38YN7DXB9MyPSyHYa+g=="
+            },
+            containerName: "chatbotlogs",
+            blobName: "logs/" + datePath + "----" + require('uuid/v4')().substring(0,10) + ".log",
+            level: "info"
+            })
+        ]
+    });
+    //global._logger = winston;
+    global._logger.info("Logging in production");    
+} else {
+    global._logger = winston;
+    global._logger.info('logging not in production');
+}
 
-// // global._hotelsPerPage = 5;
-// // global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
-// // global._logger.log('info','init',{'env': process.env.BotEnv})
-// // global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
+global._hotelsPerPage = 5;
+global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
+global._logger.log('info','init',{'env': process.env.BotEnv})
+global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
 
 // var GreetingWaterfall = require('./dialogues/greeting').greeting;
 // var AskCityWaterfall = require('./dialogues/ask-city').askCity;
@@ -155,14 +155,14 @@ const intents = new builder.IntentDialog({
     session.send('Sorry, I did not understand \'%s\'.', session.message.text);
 });
 
-//global._qnaRecognizer = qnaRecognizer
+// global._qnaRecognizer = qnaRecognizer
 
-//define commom pattern
+// //define commom pattern
 // const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i');
 // global._partten = {};
 // global._partten.noIntentPattern = noIntentPattern;
 
-//bot.recognizer(qnaRecognizer);
+// bot.recognizer(qnaRecognizer);
 // bot.recognizer(recognizer);
 // bot.dialog('/', intents);
 
