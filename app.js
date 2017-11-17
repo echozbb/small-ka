@@ -109,26 +109,26 @@ var bot = new builder.UniversalBot(connector, function (session) {
 });
 
 //send proactive message if no reply from user
-// global._timeoutobject = {}
-// bot.on('receive', function(args) {
-//     global._logger.log('info', "incoming text: ", {'text': args.text, 'user':  args.address,'time': args.timestamp});
-//     var userAddress = args.address;
-//     var user = args.user
-//     clearTimeout(global._timeoutobject[user]);
-//     global._timeoutobject[user] = setTimeout(sendProactiveMessage, 120000, userAddress);
-//     //rgs.text = preprocessor.preprocess(args.text);
-//     global._logger.log('info', "parsed text:", {'text': args.text});    
-// });
-// bot.on('send', function (args){
-//     global._logger.log('info', "output text: ", {'text': args.text, 'user':  args.address});
-// });
+global._timeoutobject = {}
+bot.on('receive', function(args) {
+    global._logger.log('info', "incoming text: ", {'text': args.text, 'user':  args.address,'time': args.timestamp});
+    var userAddress = args.address;
+    var user = args.user
+    clearTimeout(global._timeoutobject[user]);
+    global._timeoutobject[user] = setTimeout(sendProactiveMessage, 120000, userAddress);
+    //rgs.text = preprocessor.preprocess(args.text);
+    global._logger.log('info', "parsed text:", {'text': args.text});    
+});
+bot.on('send', function (args){
+    global._logger.log('info', "output text: ", {'text': args.text, 'user':  args.address});
+});
 
-// function sendProactiveMessage(address) {
-//     global._logger.log('info','sending ProactiveMessage to address' + address.toString);
-//     var msg = new global._builder.Message().address(address);
-//     msg.text('您如果需要帮助，请说 帮助，小卡随时候命');
-//     bot.send(msg);
-//   }
+function sendProactiveMessage(address) {
+    global._logger.log('info','sending ProactiveMessage to address' + address.toString);
+    var msg = new global._builder.Message().address(address);
+    msg.text('您如果需要帮助，请说 帮助，小卡随时候命');
+    bot.send(msg);
+  }
 //send proactive message done
 
 bot.localePath(path.join(__dirname, './locale'));
