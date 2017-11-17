@@ -114,11 +114,11 @@ bot.localePath(path.join(__dirname, './locale'));
 
 global._builder = builder;
 
-var qnaRecognizer = new cognitiveservices.QnAMakerRecognizer({
-	knowledgeBaseId: process.env.QNA_KBID, 
-	subscriptionKey: process.env.QNA_KEY
-});
-
+// var qnaRecognizer = new cognitiveservices.QnAMakerRecognizer({
+// 	knowledgeBaseId: process.env.QNA_KBID, 
+// 	subscriptionKey: process.env.QNA_KEY
+// });
+process.env.LUIS_MODEL_URL="https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/e6dc5a93-0c84-4973-bac0-d56c44ec3693?subscription-key=7148b349a20a4fb6b1e13fb49708429a&timezoneOffset=0&verbose=true&q="
 var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
 const intents = new builder.IntentDialog({
     recognizers: [
@@ -129,14 +129,14 @@ const intents = new builder.IntentDialog({
     session.send('Sorry, I did not understand \'%s\'.', session.message.text);
 });
 
-global._qnaRecognizer = qnaRecognizer
+//global._qnaRecognizer = qnaRecognizer
 
 //define commom pattern
 const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i');
 global._partten = {};
 global._partten.noIntentPattern = noIntentPattern;
 
-bot.recognizer(qnaRecognizer);
+//bot.recognizer(qnaRecognizer);
 bot.recognizer(recognizer);
 bot.dialog('/', intents);
 
