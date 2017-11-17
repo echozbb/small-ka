@@ -73,22 +73,38 @@ var useEmulator = (process.env.BotEnv == 'development');
 // var AskLocation = require('./dialogues/ask-location');
 //var MapService =  require('./location-service');
 
+var restify = require('restify');
+// Setup Restify Server
+var server = restify.createServer();
+server.listen(process.env.port || process.env.PORT || 3978, function () {
+   console.log('%s listening to %s', server.name, server.url); 
+});
 
-// How does chat connector store session information and retrieve it?
-var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
+// Create chat connector for communicating with the Bot Framework Service
+var connector = new builder.ChatConnector({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword,
     stateEndpoint: process.env.BotStateEndpoint,
     openIdMetadata: process.env.BotOpenIdMetadata 
 });
 
+// Listen for messages from users 
+server.post('/api/messages', connector.listen());
 
-var bot = new builder.UniversalBot(connector, {
-    localizerSettings: {
-        defaultLocale: default_locale
-    }
-});
+// // How does chat connector store session information and retrieve it?
+// var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
+//     appId: process.env.MicrosoftAppId,
+//     appPassword: process.env.MicrosoftAppPassword,
+//     stateEndpoint: process.env.BotStateEndpoint,
+//     openIdMetadata: process.env.BotOpenIdMetadata 
+// });
 
+
+// var bot = new builder.UniversalBot(connector, {
+//     localizerSettings: {
+//         defaultLocale: default_locale
+//     }
+// });
 
 
 var bot = new builder.UniversalBot(connector, function (session) {
@@ -237,23 +253,23 @@ global._builder = builder;
 // //trigger by action
 // bot.beginDialogAction('confirmHotelAction','confirmHotel');
 
-var restify = require('restify');
-var server = restify.createServer();
-if (useEmulator) {
+// var restify = require('restify');
+// var server = restify.createServer();
+// if (useEmulator) {
 
-    server.listen(3978, function () {
-        console.log('test bot endpont at http://localhost:3978/api/messages');
-    });
-    server.post('/api/messages', connector.listen());
-} else {
-    //module.exports = { default: connector.listen() };
-    // Setup Restify Server
-    //var restify = require('restify');
-    //var server = restify.createServer();
-    server.listen(process.env.port || process.env.PORT || 3978, function () {
-    console.log('%s listening to %s', server.name, server.url); 
-    });
-}
-// Listen for messages from users 
-server.post('/api/messages', connector.listen());
+//     server.listen(3978, function () {
+//         console.log('test bot endpont at http://localhost:3978/api/messages');
+//     });
+//     server.post('/api/messages', connector.listen());
+// } else {
+//     //module.exports = { default: connector.listen() };
+//     // Setup Restify Server
+//     //var restify = require('restify');
+//     //var server = restify.createServer();
+//     server.listen(process.env.port || process.env.PORT || 3978, function () {
+//     console.log('%s listening to %s', server.name, server.url); 
+//     });
+// }
+// // Listen for messages from users 
+// server.post('/api/messages', connector.listen());
 
