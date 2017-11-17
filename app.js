@@ -19,33 +19,35 @@ var cognitiveservices = require('botbuilder-cognitiveservices');
 const default_locale = 'zh-Hans';
 var useEmulator = (process.env.BotEnv == 'development');
 
-if(process.env.BotEnv == 'prod') {
-    require("winston-azure-blob-transport");    
-    function toDateStr(number) {
-        return number < 10?  "0" + number.toString() : number.toString();        
-    }   
-    var d = new Date();
-    var datePath = d.getUTCFullYear() + "-" +toDateStr(d.getUTCMonth()+1) + "-" + toDateStr(d.getUTCDate()) + "/" + toDateStr(d.getUTCHours()) + "-" + toDateStr(d.getUTCMinutes());
-    global._logger = new (winston.Logger)({
-        transports: [
-            new (winston.transports.AzureBlob)({    
-            account: {
-                name: "cozitripchatbot",
-                key: "/XtqnGbTT49mrDkRJC5JQ3ds1Urwmd5ukdBIgAK8/bWbcAK9sGBiwJz7dWzmGgTvVtf38YN7DXB9MyPSyHYa+g=="
-            },
-            containerName: "chatbotlogs",
-            blobName: "logs/" + datePath + "----" + require('uuid/v4')().substring(0,10) + ".log",
-            level: "info"
-            })
-        ]
-    });
-    //global._logger = winston;
-    global._logger.info("Logging in production");    
-} else {
-    global._logger = winston;
-    global._logger.info('logging not in production');
-}
+// if(process.env.BotEnv == 'prod') {
+//     require("winston-azure-blob-transport");    
+//     function toDateStr(number) {
+//         return number < 10?  "0" + number.toString() : number.toString();        
+//     }   
+//     var d = new Date();
+//     var datePath = d.getUTCFullYear() + "-" +toDateStr(d.getUTCMonth()+1) + "-" + toDateStr(d.getUTCDate()) + "/" + toDateStr(d.getUTCHours()) + "-" + toDateStr(d.getUTCMinutes());
+//     global._logger = new (winston.Logger)({
+//         transports: [
+//             new (winston.transports.AzureBlob)({    
+//             account: {
+//                 name: "cozitripchatbot",
+//                 key: "/XtqnGbTT49mrDkRJC5JQ3ds1Urwmd5ukdBIgAK8/bWbcAK9sGBiwJz7dWzmGgTvVtf38YN7DXB9MyPSyHYa+g=="
+//             },
+//             containerName: "chatbotlogs",
+//             blobName: "logs/" + datePath + "----" + require('uuid/v4')().substring(0,10) + ".log",
+//             level: "info"
+//             })
+//         ]
+//     });
+//     //global._logger = winston;
+//     global._logger.info("Logging in production");    
+// } else {
+//     global._logger = winston;
+//     global._logger.info('logging not in production');
+// }
 
+global._logger = winston;
+global._logger.info('logging not in production');
 global._hotelsPerPage = 5;
 global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
 global._logger.log('info','init',{'env': process.env.BotEnv})
@@ -90,14 +92,6 @@ var connector = new builder.ChatConnector({
 
 // Listen for messages from users 
 server.post('/api/messages', connector.listen());
-
-// // How does chat connector store session information and retrieve it?
-// var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
-//     appId: process.env.MicrosoftAppId,
-//     appPassword: process.env.MicrosoftAppPassword,
-//     stateEndpoint: process.env.BotStateEndpoint,
-//     openIdMetadata: process.env.BotOpenIdMetadata 
-// });
 
 
 // var bot = new builder.UniversalBot(connector, {
