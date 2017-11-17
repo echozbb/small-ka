@@ -24,7 +24,8 @@
     "winston-azure-blob-transport": "^0.2.6"
   },
   "devDependencies": {
-    "restify": "^4.3.0"
+    "restify": "^4.3.0",
+    "zip-folder": "^1.0.0"
   },
   "scripts": {
     "test": "mocha \"./*/*.spec.js\""
