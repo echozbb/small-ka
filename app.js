@@ -76,15 +76,24 @@ var useEmulator = (process.env.BotEnv == 'development');
 
 // How does chat connector store session information and retrieve it?
 var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
-    appId: process.env['MicrosoftAppId'],
-    appPassword: process.env['MicrosoftAppPassword'],
-    stateEndpoint: process.env['BotStateEndpoint'],
-    openIdMetadata: process.env['BotOpenIdMetadata']
+    appId: process.env.MicrosoftAppId,
+    appPassword: process.env.MicrosoftAppPassword,
+    stateEndpoint: process.env.BotStateEndpoint,
+    openIdMetadata: process.env.BotOpenIdMetadata 
 });
+
+
 var bot = new builder.UniversalBot(connector, {
     localizerSettings: {
         defaultLocale: default_locale
     }
+});
+
+
+
+var bot = new builder.UniversalBot(connector, function (session) {
+    session.send("%s, I heard: %s", session.userData.name, session.message.text);
+    session.send("Say 'help' or something else...");
 });
 
 //send proactive message if no reply from user
@@ -114,20 +123,21 @@ bot.localePath(path.join(__dirname, './locale'));
 
 global._builder = builder;
 
+
 // var qnaRecognizer = new cognitiveservices.QnAMakerRecognizer({
 // 	knowledgeBaseId: process.env.QNA_KBID, 
 // 	subscriptionKey: process.env.QNA_KEY
 // });
-process.env.LUIS_MODEL_URL="https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/e6dc5a93-0c84-4973-bac0-d56c44ec3693?subscription-key=7148b349a20a4fb6b1e13fb49708429a&timezoneOffset=0&verbose=true&q="
-var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
-const intents = new builder.IntentDialog({
-    recognizers: [
-        recognizer//,qnaRecognizer
-    ],
-    intentThreshold: 0.75
-}).onDefault((session) => {
-    session.send('Sorry, I did not understand \'%s\'.', session.message.text);
-});
+// process.env.LUIS_MODEL_URL="https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/e6dc5a93-0c84-4973-bac0-d56c44ec3693?subscription-key=7148b349a20a4fb6b1e13fb49708429a&timezoneOffset=0&verbose=true&q="
+// var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
+// const intents = new builder.IntentDialog({
+//     recognizers: [
+//         recognizer//,qnaRecognizer
+//     ],
+//     intentThreshold: 0.75
+// }).onDefault((session) => {
+//     session.send('Sorry, I did not understand \'%s\'.', session.message.text);
+// });
 
 //global._qnaRecognizer = qnaRecognizer
 
@@ -137,8 +147,8 @@ const intents = new builder.IntentDialog({
 // global._partten.noIntentPattern = noIntentPattern;
 
 //bot.recognizer(qnaRecognizer);
-bot.recognizer(recognizer);
-bot.dialog('/', intents);
+// bot.recognizer(recognizer);
+// bot.dialog('/', intents);
 
 // intents.matches('Greeting', 'Greeting');
 // intents.onDefault('Greeting');
@@ -227,16 +237,23 @@ bot.dialog('/', intents);
 // //trigger by action
 // bot.beginDialogAction('confirmHotelAction','confirmHotel');
 
-
+var restify = require('restify');
+var server = restify.createServer();
 if (useEmulator) {
-    var restify = require('restify');
-    var server = restify.createServer();
+
     server.listen(3978, function () {
         console.log('test bot endpont at http://localhost:3978/api/messages');
     });
     server.post('/api/messages', connector.listen());
 } else {
-    module.exports = { default: connector.listen() }
+    //module.exports = { default: connector.listen() };
+    // Setup Restify Server
+    //var restify = require('restify');
+    //var server = restify.createServer();
+    server.listen(process.env.port || process.env.PORT || 3978, function () {
+    console.log('%s listening to %s', server.name, server.url); 
+    });
 }
-
+// Listen for messages from users 
+server.post('/api/messages', connector.listen());
 
