@@ -111,7 +111,7 @@ var bot = new builder.UniversalBot(connector, {
 //send proactive message done
 
 bot.localePath(path.join(__dirname, './locale'));
-var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
+
 global._builder = builder;
 
 var qnaRecognizer = new cognitiveservices.QnAMakerRecognizer({
@@ -119,6 +119,7 @@ var qnaRecognizer = new cognitiveservices.QnAMakerRecognizer({
 	subscriptionKey: process.env.QNA_KEY
 });
 
+var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
 const intents = new builder.IntentDialog({
     recognizers: [
         recognizer//,qnaRecognizer
