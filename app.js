@@ -55,27 +55,27 @@ global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
 global._logger.log('info','init',{'env': process.env.BotEnv})
 global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
 
-// var GreetingWaterfall = require('./dialogues/greeting').greeting;
-// var AskCityWaterfall = require('./dialogues/ask-city').askCity;
-// var AskHotelWaterfall = require('./dialogues/ask-hotel').askHotel;
-// var RequestHotelWaterfall = require('./dialogues/request-hotel').requestHotel;
-// var ChooseHotelWaterfall = require('./dialogues/choose-hotel');
-// var HelpWaterfall = require('./dialogues/help').help;
-// //var AskDate = require('./dialogues/ask-date');
-// //var AskPrice = require('./dialogues/ask-price');
-// //var AskRegionWaterfall = require('./dialogues/ask-region').askRegion;
-// //var AskStar = require('./dialogues/ask-star');
-// var AskGuest = require('./dialogues/ask-guest');
-// //var AskRooms = require('./dialogues/ask-rooms');
-// var RequestActivityWaterfal = require('./dialogues/request-activity').requestActivity;
-// var ChooseRooms = require('./dialogues/choose-room');
-// var BookHotel = require('./dialogues/book-hotel');
-// var UpdateInfo = require('./dialogues/update-info');
-// var DoubleConfirm = require('./dialogues/double-confirm');
-// var QNAMarker = require('./dialogues/qna-marker');
-// var StartOver = require('./dialogues/start-over');
-// var AskLocation = require('./dialogues/ask-location');
-//var MapService =  require('./location-service');
+var GreetingWaterfall = require('./dialogues/greeting').greeting;
+var AskCityWaterfall = require('./dialogues/ask-city').askCity;
+var AskHotelWaterfall = require('./dialogues/ask-hotel').askHotel;
+var RequestHotelWaterfall = require('./dialogues/request-hotel').requestHotel;
+var ChooseHotelWaterfall = require('./dialogues/choose-hotel');
+var HelpWaterfall = require('./dialogues/help').help;
+//var AskDate = require('./dialogues/ask-date');
+//var AskPrice = require('./dialogues/ask-price');
+//var AskRegionWaterfall = require('./dialogues/ask-region').askRegion;
+//var AskStar = require('./dialogues/ask-star');
+var AskGuest = require('./dialogues/ask-guest');
+//var AskRooms = require('./dialogues/ask-rooms');
+var RequestActivityWaterfal = require('./dialogues/request-activity').requestActivity;
+var ChooseRooms = require('./dialogues/choose-room');
+var BookHotel = require('./dialogues/book-hotel');
+var UpdateInfo = require('./dialogues/update-info');
+var DoubleConfirm = require('./dialogues/double-confirm');
+var QNAMarker = require('./dialogues/qna-marker');
+var StartOver = require('./dialogues/start-over');
+var AskLocation = require('./dialogues/ask-location');
+var MapService =  require('./map-service');
 
 var restify = require('restify');
 // Setup Restify Server
