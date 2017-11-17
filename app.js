@@ -19,26 +19,26 @@ var preprocessor = require('./utils/preprocessor');
 const default_locale = 'zh-Hans';
 var useEmulator = (process.env.BotEnv == 'development');
 if(process.env.BotEnv == 'prod') {
-    // require("winston-azure-blob-transport");    
-    // function toDateStr(number) {
-    //     return number < 10?  "0" + number.toString() : number.toString();        
-    // }   
-    // var d = new Date();
-    // var datePath = d.getUTCFullYear() + "-" +toDateStr(d.getUTCMonth()+1) + "-" + toDateStr(d.getUTCDate()) + "/" + toDateStr(d.getUTCHours()) + "-" + toDateStr(d.getUTCMinutes());
-    // global._logger = new (winston.Logger)({
-    //     transports: [
-    //         new (winston.transports.AzureBlob)({    
-    //         account: {
-    //             name: "cozitripchatbot",
-    //             key: "/XtqnGbTT49mrDkRJC5JQ3ds1Urwmd5ukdBIgAK8/bWbcAK9sGBiwJz7dWzmGgTvVtf38YN7DXB9MyPSyHYa+g=="
-    //         },
-    //         containerName: "chatbotlogs",
-    //         blobName: "logs/" + datePath + "----" + require('uuid/v4')().substring(0,10) + ".log",
-    //         level: "info"
-    //         })
-    //     ]
-    // });
-    global._logger = winston;
+    require("winston-azure-blob-transport");    
+    function toDateStr(number) {
+        return number < 10?  "0" + number.toString() : number.toString();        
+    }   
+    var d = new Date();
+    var datePath = d.getUTCFullYear() + "-" +toDateStr(d.getUTCMonth()+1) + "-" + toDateStr(d.getUTCDate()) + "/" + toDateStr(d.getUTCHours()) + "-" + toDateStr(d.getUTCMinutes());
+    global._logger = new (winston.Logger)({
+        transports: [
+            new (winston.transports.AzureBlob)({    
+            account: {
+                name: "cozitripchatbot",
+                key: "/XtqnGbTT49mrDkRJC5JQ3ds1Urwmd5ukdBIgAK8/bWbcAK9sGBiwJz7dWzmGgTvVtf38YN7DXB9MyPSyHYa+g=="
+            },
+            containerName: "chatbotlogs",
+            blobName: "logs/" + datePath + "----" + require('uuid/v4')().substring(0,10) + ".log",
+            level: "info"
+            })
+        ]
+    });
+    //global._logger = winston;
     global._logger.info("Logging in production");    
 } else {
     global._logger = winston;
