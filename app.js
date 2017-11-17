@@ -96,17 +96,17 @@ var connector = new builder.ChatConnector({
 server.post('/api/messages', connector.listen());
 
 
-// var bot = new builder.UniversalBot(connector, {
-//     localizerSettings: {
-//         defaultLocale: default_locale
-//     }
-// });
-
-
-var bot = new builder.UniversalBot(connector, function (session) {
-    session.send("%s, I heard: %s", session.userData.name, session.message.text);
-    session.send("Say 'help' or something else...");
+var bot = new builder.UniversalBot(connector, {
+    localizerSettings: {
+        defaultLocale: default_locale
+    }
 });
+
+
+// var bot = new builder.UniversalBot(connector, function (session) {
+//     session.send("%s, I heard: %s", session.userData.name, session.message.text);
+//     session.send("Say 'help' or something else...");
+// });
 
 //send proactive message if no reply from user
 global._timeoutobject = {}
@@ -158,96 +158,96 @@ const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i')
 global._partten = {};
 global._partten.noIntentPattern = noIntentPattern;
 
-// bot.recognizer(qnaRecognizer);
-// bot.recognizer(recognizer);
-// bot.dialog('/', intents);
+bot.recognizer(qnaRecognizer);
+bot.recognizer(recognizer);
+bot.dialog('/', intents);
 
-// intents.matches('Greeting', 'Greeting');
-// intents.onDefault('Greeting');
-// intents.matches('RequestHotel', 'RequestHotel').triggerAction({
-//     onInterrupted: function (session, dialogId, dialogArgs, next) {
-//         session.userData.savedAddress = session.message.address;
-//         console.log('RequestHotel is interrupted by dialogId=' + dialogId + ', dialogArgs=' +  JSON.stringify(dialogArgs));
-//         next();
-//     }
-// });
-
-
-// bot.dialog('RequestHotel', RequestHotelWaterfall).triggerAction({
-//     matches: 'RequestHotel',  intentThreshold: 0.75,
-//     onInterrupted: function (session, dialogId, dialogArgs, next) {
-//         session.userData.savedAddress = session.message.address;
-//         console.log('RequestHotel is interrupted by dialogId=' + dialogId + ', dialogArgs=' +  JSON.stringify(dialogArgs));
-//         next();
-//     }
-//  })
+intents.matches('Greeting', 'Greeting');
+intents.onDefault('Greeting');
+intents.matches('RequestHotel', 'RequestHotel').triggerAction({
+    onInterrupted: function (session, dialogId, dialogArgs, next) {
+        session.userData.savedAddress = session.message.address;
+        console.log('RequestHotel is interrupted by dialogId=' + dialogId + ', dialogArgs=' +  JSON.stringify(dialogArgs));
+        next();
+    }
+});
 
 
-// bot.dialog('RequestActivity',RequestActivityWaterfal).triggerAction({ matches: /^(活动|什么玩)/i});
-// bot.dialog('qna', QNAMarker.qnaDialog).triggerAction({matches: 'qna', intentThreshold: 0.8})
-// bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver', intentThreshold: 0.8})
-// bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
-//     matches: 'ChangeRequest', intentThreshold: 0.9
-// });
-
-// bot.dialog('continue',[
-//     function (session, args) {
-//         if (session.privateConversationData.hotelRequest != null) {
-//             session.send('好的，让我们继续');
-//             session.replaceDialog('RequestHotel',{'repeat': session.privateConversationData.hotelRequest, 'steps': session.dialogData.steps, 'address': session.userData.savedAddress})
-//         } else {
-//             session.replaceDialog('Greeting');
-//         }
-//     }
-// ]).triggerAction({matches: /^(继续)/i})
-
-// bot.dialog('endConversation', [function (session, args) {
-//     session.clearDialogStack();
-//     session.endConversation('感谢使用小卡，下次见，拜拜');
-// }]).triggerAction({matches: 'EndConversation', intentThreshold: 0.7})
-// bot.dialog('Greeting', GreetingWaterfall);
-// bot.dialog('askForCity', AskCityWaterfall);
-// bot.dialog('askForHotel', AskHotelWaterfall);
-// bot.dialog('choose_hotel', ChooseHotelWaterfall.chooseHotel);
-// // bot.dialog('askCheckinCheckout', AskDate.askCheckinCheckout);
-// // bot.dialog('askCheckin', AskDate.askCheckin);
-// // bot.dialog('askCheckout', AskDate.askCheckout);
-// // bot.dialog('askPrice', AskPrice.askPrice);
-// // bot.dialog('askMinPrice', AskPrice.askMinPrice);
-// // bot.dialog('askMaxPrice', AskPrice.askMaxPrice);
-// // bot.dialog('askRegion', AskRegionWaterfall);
-// // bot.dialog('askStar', AskStar.askStar);
-// // bot.dialog('askMinStar', AskStar.askMinStar);
-// // bot.dialog('askMaxStar', AskStar.askMaxStar);
-// bot.dialog('askGuest', AskGuest.askGuest)
-// bot.dialog('askGuestGender', AskGuest.askGuestGender);
-// // bot.dialog('askAdult', AskGuest.askAdult);
-// // bot.dialog('askChild', AskGuest.askChild);
-// // bot.dialog('askChildAge', AskGuest.askChildAge);
-// // bot.dialog('askRooms', AskRooms.askRooms);
-// bot.dialog('askGuestName', AskGuest.askGuestName);
-// bot.dialog('chooseRoom', ChooseRooms.chooseRoom);
-// bot.dialog('confirmRoom', ChooseRooms.confirmRoom);
-// bot.dialog('book', BookHotel.book);
-// bot.dialog('updateInfo', UpdateInfo.updateInfo);
-// bot.dialog('doubleConfirm', DoubleConfirm.doubleConfirm);
-// bot.dialog('qnaMarker', QNAMarker.qnaDialog);
-// bot.dialog('confirmConfilict', DoubleConfirm.confirmConfilict);
-// bot.dialog('confirmHotel',ChooseHotelWaterfall.confirmHotel);
-// bot.dialog('showOptionalHotel', ChooseHotelWaterfall.showOptionalHotels);
-// bot.dialog('askLocation', AskLocation.askLocation);
-// bot.dialog('showDistance', AskLocation.showDistance).triggerAction({
-//     matches: 'ChangeRequest', intentThreshold: 0.9
-//     // onInterrupted: function (session, dialogId, dialogArgs, next) {
-//     //     session.privateConversationData.disableLuis = false;
-//     //     next();
-//     // }
-// })
-// bot.endConversationAction('goodbye','感谢使用小卡，期待下次继续为您服务');
+bot.dialog('RequestHotel', RequestHotelWaterfall).triggerAction({
+    matches: 'RequestHotel',  intentThreshold: 0.75,
+    onInterrupted: function (session, dialogId, dialogArgs, next) {
+        session.userData.savedAddress = session.message.address;
+        console.log('RequestHotel is interrupted by dialogId=' + dialogId + ', dialogArgs=' +  JSON.stringify(dialogArgs));
+        next();
+    }
+ })
 
 
-// //trigger by action
-// bot.beginDialogAction('confirmHotelAction','confirmHotel');
+bot.dialog('RequestActivity',RequestActivityWaterfal).triggerAction({ matches: /^(活动|什么玩)/i});
+bot.dialog('qna', QNAMarker.qnaDialog).triggerAction({matches: 'qna', intentThreshold: 0.8})
+bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver', intentThreshold: 0.8})
+bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
+    matches: 'ChangeRequest', intentThreshold: 0.9
+});
+
+bot.dialog('continue',[
+    function (session, args) {
+        if (session.privateConversationData.hotelRequest != null) {
+            session.send('好的，让我们继续');
+            session.replaceDialog('RequestHotel',{'repeat': session.privateConversationData.hotelRequest, 'steps': session.dialogData.steps, 'address': session.userData.savedAddress})
+        } else {
+            session.replaceDialog('Greeting');
+        }
+    }
+]).triggerAction({matches: /^(继续)/i})
+
+bot.dialog('endConversation', [function (session, args) {
+    session.clearDialogStack();
+    session.endConversation('感谢使用小卡，下次见，拜拜');
+}]).triggerAction({matches: 'EndConversation', intentThreshold: 0.7})
+bot.dialog('Greeting', GreetingWaterfall);
+bot.dialog('askForCity', AskCityWaterfall);
+bot.dialog('askForHotel', AskHotelWaterfall);
+bot.dialog('choose_hotel', ChooseHotelWaterfall.chooseHotel);
+// bot.dialog('askCheckinCheckout', AskDate.askCheckinCheckout);
+// bot.dialog('askCheckin', AskDate.askCheckin);
+// bot.dialog('askCheckout', AskDate.askCheckout);
+// bot.dialog('askPrice', AskPrice.askPrice);
+// bot.dialog('askMinPrice', AskPrice.askMinPrice);
+// bot.dialog('askMaxPrice', AskPrice.askMaxPrice);
+// bot.dialog('askRegion', AskRegionWaterfall);
+// bot.dialog('askStar', AskStar.askStar);
+// bot.dialog('askMinStar', AskStar.askMinStar);
+// bot.dialog('askMaxStar', AskStar.askMaxStar);
+bot.dialog('askGuest', AskGuest.askGuest)
+bot.dialog('askGuestGender', AskGuest.askGuestGender);
+// bot.dialog('askAdult', AskGuest.askAdult);
+// bot.dialog('askChild', AskGuest.askChild);
+// bot.dialog('askChildAge', AskGuest.askChildAge);
+// bot.dialog('askRooms', AskRooms.askRooms);
+bot.dialog('askGuestName', AskGuest.askGuestName);
+bot.dialog('chooseRoom', ChooseRooms.chooseRoom);
+bot.dialog('confirmRoom', ChooseRooms.confirmRoom);
+bot.dialog('book', BookHotel.book);
+bot.dialog('updateInfo', UpdateInfo.updateInfo);
+bot.dialog('doubleConfirm', DoubleConfirm.doubleConfirm);
+bot.dialog('qnaMarker', QNAMarker.qnaDialog);
+bot.dialog('confirmConfilict', DoubleConfirm.confirmConfilict);
+bot.dialog('confirmHotel',ChooseHotelWaterfall.confirmHotel);
+bot.dialog('showOptionalHotel', ChooseHotelWaterfall.showOptionalHotels);
+bot.dialog('askLocation', AskLocation.askLocation);
+bot.dialog('showDistance', AskLocation.showDistance).triggerAction({
+    matches: 'ChangeRequest', intentThreshold: 0.9
+    // onInterrupted: function (session, dialogId, dialogArgs, next) {
+    //     session.privateConversationData.disableLuis = false;
+    //     next();
+    // }
+})
+bot.endConversationAction('goodbye','感谢使用小卡，期待下次继续为您服务');
+
+
+//trigger by action
+bot.beginDialogAction('confirmHotelAction','confirmHotel');
 
 // var restify = require('restify');
 // var server = restify.createServer();
