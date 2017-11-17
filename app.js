@@ -46,12 +46,14 @@ var useEmulator = (process.env.BotEnv == 'development');
 //     global._logger.info('logging not in production');
 // }
 
+var utils = require('./utils/utils');
 
+global._logger = utils;
 
-// global._hotelsPerPage = 5;
-// global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
-// global._logger.log('info','init',{'env': process.env.BotEnv})
-// global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
+global._hotelsPerPage = 5;
+global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
+global._logger.log('info','init',{'env': process.env.BotEnv})
+global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
 
 // var GreetingWaterfall = require('./dialogues/greeting').greeting;
 // var AskCityWaterfall = require('./dialogues/ask-city').askCity;
@@ -149,12 +151,12 @@ const intents = new builder.IntentDialog({
     session.send('Sorry, I did not understand \'%s\'.', session.message.text);
 });
 
-// global._qnaRecognizer = qnaRecognizer
+global._qnaRecognizer = qnaRecognizer
 
-// //define commom pattern
-// const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i');
-// global._partten = {};
-// global._partten.noIntentPattern = noIntentPattern;
+//define commom pattern
+const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i');
+global._partten = {};
+global._partten.noIntentPattern = noIntentPattern;
 
 // bot.recognizer(qnaRecognizer);
 // bot.recognizer(recognizer);

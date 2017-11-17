@@ -774,6 +774,10 @@ module.exports = {
                 return desc.match(pattern) != null
             }
         });
+    },
+
+    log: function(text) {
+            console.log(text);
     }
 
 };
