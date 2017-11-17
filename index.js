@@ -3,7 +3,7 @@ To learn more about this template please visit
 https://aka.ms/abs-node-proactive
 -----------------------------------------------------------------------------*/
 "use strict";
-// require('launch-json');
+require('launch-json');
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
 var azure = require('azure-storage');

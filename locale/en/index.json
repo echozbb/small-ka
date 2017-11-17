@@ -1,0 +1,6 @@
+{
+    "welcome" : "Welcome to cozitrip! You can say like this: 2017-10-20 - 2017-10-21 Sydney Four Seasons strandard room 2 rooms exclude breakfast.",
+    "prompt_city": "Please input the hotel name or input N to skip this step",
+    "prompt_hotel": "Which hotel do you want to stay or input N to skip this step",
+    "recommend_hotel": "Sorry, recomment hotel is not supported"
+}
