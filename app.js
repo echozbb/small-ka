@@ -5,16 +5,16 @@ https://aka.ms/abs-node-proactive
 "use strict";
 // require('launch-json');
 var builder = require("botbuilder");
-var botbuilder_azure = require("botbuilder-azure");
-var azure = require('azure-storage');
+//ar botbuilder_azure = require("botbuilder-azure");
+//var azure = require('azure-storage');
 var path = require('path');
-var winston = require('winston');
+//var winston = require('winston');
 
 //var Domain = require('./domain');
-var Luis = require('./luis-service');
+//var Luis = require('./luis-service');
 var cognitiveservices = require('botbuilder-cognitiveservices');
 
-var preprocessor = require('./utils/preprocessor');
+//var preprocessor = require('./utils/preprocessor');
 
 const default_locale = 'zh-Hans';
 var useEmulator = (process.env.BotEnv == 'development');
@@ -132,9 +132,9 @@ const intents = new builder.IntentDialog({
 //global._qnaRecognizer = qnaRecognizer
 
 //define commom pattern
-const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i');
-global._partten = {};
-global._partten.noIntentPattern = noIntentPattern;
+// const noIntentPattern = new RegExp("不知道|没|随便|no|not|don't know",'i');
+// global._partten = {};
+// global._partten.noIntentPattern = noIntentPattern;
 
 //bot.recognizer(qnaRecognizer);
 bot.recognizer(recognizer);
