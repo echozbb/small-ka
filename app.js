@@ -46,12 +46,12 @@ var useEmulator = (process.env.BotEnv == 'development');
 //     global._logger.info('logging not in production');
 // }
 
-global._logger = winston;
-global._logger.info('logging not in production');
-global._hotelsPerPage = 5;
-global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
-global._logger.log('info','init',{'env': process.env.BotEnv})
-global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
+
+
+// global._hotelsPerPage = 5;
+// global._logger.log('info','init', {'global._useRichcard': global._useRichcard});
+// global._logger.log('info','init',{'env': process.env.BotEnv})
+// global._logger.log('info','init',{'LUIS': process.env.LUIS_MODEL_URL})
 
 // var GreetingWaterfall = require('./dialogues/greeting').greeting;
 // var AskCityWaterfall = require('./dialogues/ask-city').askCity;
