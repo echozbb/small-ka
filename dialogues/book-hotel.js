@@ -1,9 +1,10 @@
 var Hotel = require('../hotel-service');
+var Utils = require('../utils/utils');
 
 exports.book = [
     function (session, args) {
         session.dialogData.hotelUuid = session.privateConversationData.hotelRequest.hotelUuid;
-        session.dialogData.request = session.privateConversationData.hotelRequest.multiRequest;
+        session.dialogData.request = Utils.buildMultiRoomRequest(session.privateConversationData.hotelRequest);
         session.dialogData.rooms = session.privateConversationData.hotelRequest.rooms;
         session.dialogData.confirmedRoom = args.confirmedRoom;
         session.dialogData.hotelName = session.privateConversationData.hotelRequest.hotelName;
