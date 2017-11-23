@@ -5,7 +5,7 @@ var Utils = require('../utils/utils');
 exports.askLocation = [    
     function(session, args, next) {
         if (session.privateConversationData.hotelRequest.preferredLocation == null) {
-            global._builder.Prompts.text(session, "您如果对酒店位置有特别要求，请告诉我，如飞机场，CBD，悉尼歌剧院，如果没有请说 没有");
+            global._builder.Prompts.text(session, "您如果对酒店位置有特别要求，请告诉我，如飞机场，CBD，歌剧院，如果没有请说 没有");
             session.privateConversationData.hotelRequest.hotelName = '没'
         } else {
             next ({response: true});
