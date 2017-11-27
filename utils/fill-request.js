@@ -96,7 +96,8 @@ module.exports  = {
             }
         }
         for (var i = 0; i < searchItems.length; i++) {
-            message = Utils.removeMatchedEntity(message, searchItems[i].startIndex, searchItems[i].endIndex);
+            message = Utils.removeMatchedEntity(message, searchItems[i].startIndex, searchItems[i].endIndex).replace(/星|级/g,'#');;
+            message = Utils.removeMatchedEntity(message, searchItems[i].startIndex, searchItems[i].endIndex).replace(/成人|儿童|小孩/g,'##');;
         }
         //************ Process search Item end */
 
@@ -188,7 +189,7 @@ module.exports  = {
         var bedType = [];
         if (bedTypeEntities.length > 0) {
             for (var i = 0; i < bedTypeEntities.length; i++) {
-                message = Utils.removeMatchedEntity(message, bedTypeEntities[i].startIndex, bedTypeEntities[i].endIndex);
+                message = Utils.removeMatchedEntity(message, bedTypeEntities[i].startIndex, bedTypeEntities[i].endIndex).replace(/房/g,'#');;
                 if (bedType.indexOf(bedTypeEntities[i].resolution.values[0] == -1)) {
                     bedType.push(bedTypeEntities[i].resolution.values[0]);
                 }

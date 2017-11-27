@@ -22,7 +22,7 @@ exports.doubleConfirm = [
                 if (msg.length != 0) {
                     msg += "; "
                 }
-                msg += "亲，还请您请补充："
+                msg += "\n\n亲，还请您请补充："
                 for (var i=0; i< missing.length; i++) {
                     if (i > 0) {
                         msg += ", ";
@@ -34,7 +34,7 @@ exports.doubleConfirm = [
                 if (msg.length != 0) {
                     msg += "; "
                 }
-                msg += "亲，请更正："
+                msg += "\n\n亲，请更正："
                 for (var i=0; i< incorrect.length; i++) {
                     if (i > 0) {
                         msg += ", ";

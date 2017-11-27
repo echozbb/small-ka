@@ -248,6 +248,7 @@ bot.endConversationAction('goodbye','感谢使用小卡，期待下次继续为�
 
 //trigger by action
 bot.beginDialogAction('confirmHotelAction','confirmHotel');
+bot.beginDialogAction('chooseRoomAction', 'confirmRoom');
 
 // var restify = require('restify');
 // var server = restify.createServer();

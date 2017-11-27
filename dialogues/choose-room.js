@@ -63,6 +63,10 @@ exports.chooseRoom = [
                 rooms = Utils.optimizeRoomsResult(session, rooms, multiRequest);
                 global._logger.log("info","choose-room","rooms after optimize result -> " + JSON.stringify(rooms));
                 var choice = {};
+                var msg = new global._builder.Message(session);
+                msg.attachmentLayout(global._builder.AttachmentLayout.carousel); //carousel
+
+
                 for (var i=0; i < rooms.length && i<6; i++) {
                     var aRoom = rooms[i];
                     aRoom['rooms'] = multiRequest.rooms;
@@ -77,10 +81,23 @@ exports.chooseRoom = [
                     }
                     choice[rooms[i].roomName + ' | 每晚每间价格从 **AUD ' +  Math.round(rooms[i].price/nights) + '**起 | ' + breakfastStr + ' | ' + freeCancelStr] = aRoom
                     console.log('you have these choice: ' + JSON.stringify(choice));
+
+
+                    var aCard = new global._builder.HeroCard(session)
+                    .title(rooms[i].roomName)
+                    .subtitle(breakfastStr + ' | ' + freeCancelStr)
+                    .text('每晚每间价格从 **AUD ' +  Math.round(rooms[i].price/nights) + '**起' )
+                    //.images([global._builder.CardImage.create(session, quotes[i].thumbNailUrls[0])])
+                    .buttons([
+                        //global._builder.CardAction.postBack(session, JSON.stringify(aHotel),'选择')
+                        global._builder.CardAction.dialogAction(session, 'chooseRoomAction', JSON.stringify({room:aRoom, multiRequest: multiRequest}),'选择房型')
+                    ])
+                    msg.addAttachment(aCard);
                 }
                 
                 if (rooms.length >= 1) {
-                    session.beginDialog('confirmRoom', {'choice': choice, 'multiRequest': multiRequest})
+                    session.send(msg);
+                    //session.beginDialog('confirmRoom', {'choice': choice, 'multiRequest': multiRequest})
                     //global._builder.Prompts.choice(session, message, choice, global._builder.ListStyle.list);
                 } else {
                     session.send('no_rooms_found');
@@ -92,20 +109,25 @@ exports.chooseRoom = [
 ]
 
 exports.confirmRoom = [
-    function (session, args) {
-        var choice = args.choice;
-        var multiRequest = args.multiRequest;
-        session.dialogData.multiRequest = args.multiRequest;
-        session.dialogData.nights = Utils.getNights(multiRequest.arrival, multiRequest.departure);
-        var message = 'rooms_found';
-        session.dialogData.roomChoice = choice;
-        global._builder.Prompts.choice(session, message, choice, global._builder.ListStyle.list);
-    },
-    function (session, results, next) {
+    // function (session, args) {
+    //     //var choice = args.choice;
+    //     var choice = args.data;
+    //     var multiRequest = args.multiRequest;
+    //     session.dialogData.multiRequest = args.multiRequest;
+    //     session.dialogData.nights = Utils.getNights(multiRequest.arrival, multiRequest.departure);
+    //     var message = 'rooms_found';
+    //     session.dialogData.choosedRoom = JSON.parse(choice);
+    //     global._builder.Prompts.choice(session, message, choice, global._builder.ListStyle.list);
+    // },
+    function (session, args, next) {
         //get room details
-        console.log("Choosed room no." + results.response);
-        var choosedRoom = session.dialogData.roomChoice[results.response.entity];
+        console.log("Choosed room no." + args);
+        //var choosedRoom = session.dialogData.roomChoice[results.response.entity];
+        var data = JSON.parse(args.data);
+        var choosedRoom = data.room;
         session.dialogData.choosedRoom = choosedRoom;
+        session.dialogData.multiRequest = data.multiRequest
+        session.dialogData.nights = Utils.getNights(session.dialogData.multiRequest.arrival, session.dialogData.multiRequest.departure);
         var optionRates = {};
         for (var i=0; i < choosedRoom.rateInfo.length; i ++) {
             //var aRate = {};
@@ -131,7 +153,6 @@ exports.confirmRoom = [
             } else {
                 desString += "， " + "立即确认"
             }
-
             
             //freeCan += ", " + choosedRoom.rateInfo[i].mealsPlan.description;
             var choosedRoomRate = {
