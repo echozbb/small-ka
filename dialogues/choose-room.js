@@ -84,9 +84,9 @@ exports.chooseRoom = [
 
 
                     var aCard = new global._builder.HeroCard(session)
-                    .title(rooms[i].roomName)
-                    .subtitle(breakfastStr + ' | ' + freeCancelStr)
-                    .text('每晚每间价格从 **AUD ' +  Math.round(rooms[i].price/nights) + '**起' )
+                    .title(aRoom.roomName)
+                    .subtitle(breakfastStr + ' | ' + freeCancelStr + ' | ' + aRoom.bedTypeDesc)
+                    .text('每晚每间价格从 **AUD ' +  Math.round(aRoom.price/nights) + '**起' )
                     //.images([global._builder.CardImage.create(session, quotes[i].thumbNailUrls[0])])
                     .buttons([
                         //global._builder.CardAction.postBack(session, JSON.stringify(aHotel),'选择')
