@@ -52,8 +52,16 @@ exports.doubleConfirm = [
                 if (session.privateConversationData.hotelRequest.hotelUuid != null || session.privateConversationData.hotelRequest.hotelName != null) {
                     next ({response: true});
                 } else {
-                    global._builder.Prompts.text(session, msg);
-                    session.send('您也可以说 \'跳过\' 暂时忽略并继续查询');
+                    session.send(msg);
+                    var message = new global._builder.Message(session);
+                    message.text('您也可以说 \'跳过\' 暂时忽略并继续查询')
+                    message.suggestedActions(global._builder.SuggestedActions.create(session,
+                        [
+                            global._builder.CardAction.imBack(session, "跳过", "跳过")
+                        ]
+                    ));
+                    global._builder.Prompts.text(session, message);
+                    //session.send('您也可以说 \'跳过\' 暂时忽略并继续查询');
                 }
                 
             }

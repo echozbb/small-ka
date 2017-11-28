@@ -5,7 +5,18 @@ exports.askCity = [
         global._logger.log('info','askCity','current city code:' + session.privateConversationData.hotelRequest.cityCode);
         if (session.privateConversationData.hotelRequest.cityCode == null && session.privateConversationData.hotelRequest.cityName == null) {
             if (args == null) {
-                global._builder.Prompts.text(session, "prompt_city");
+                var message = new global._builder.Message(session);
+                message.text('prompt_city');
+                message.suggestedActions(global._builder.SuggestedActions.create(session,
+                    [
+                        global._builder.CardAction.imBack(session, "悉尼", "悉尼"),
+                        global._builder.CardAction.imBack(session, "墨尔本", "墨尔本"),
+                        global._builder.CardAction.imBack(session, "凯恩斯", "凯恩斯"),
+                        global._builder.CardAction.imBack(session, "黄金海岸", "黄金海岸"),
+                        global._builder.CardAction.imBack(session, "珀斯", "珀斯")
+                    ]
+                ));
+                global._builder.Prompts.text(session, message);
             } else {
                 next({ response: args });
             }

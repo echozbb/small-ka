@@ -5,7 +5,19 @@ var Utils = require('../utils/utils');
 exports.askLocation = [    
     function(session, args, next) {
         if (session.privateConversationData.hotelRequest.preferredLocation == null) {
-            global._builder.Prompts.text(session, "您如果对酒店位置有特别要求，请告诉我，如飞机场，CBD，歌剧院，如果没有请说 没有");
+            
+            var message = new global._builder.Message(session);
+            message.text("您如果对酒店位置有特别要求请告诉我，如果没有请说 没有");
+            message.suggestedActions(global._builder.SuggestedActions.create(session,
+                [
+                    global._builder.CardAction.imBack(session, "没有", "没有"),
+                    global._builder.CardAction.imBack(session, "CBD", "CBD"),
+                    global._builder.CardAction.imBack(session, "飞机场", "飞机场"),
+                    global._builder.CardAction.imBack(session, "歌剧院", "歌剧院")
+                ]
+            ));
+
+            global._builder.Prompts.text(session, message);
             session.privateConversationData.hotelRequest.hotelName = '没'
         } else {
             next ({response: true});

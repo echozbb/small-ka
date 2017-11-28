@@ -127,7 +127,7 @@ exports.askGuestName = [
         }
         global._builder.Prompts.text(session, message, args.rooms);
     },
-    function (session, results) {
+    function (session, results, next) {
         if (results.response.match(global._partten.noIntentPattern)) {
             session.send('没有客人名字无法完成预订，请输入正确的客人名字');
             session.replaceDialog('askGuestName', {'rooms': session.dialogData.rooms});
@@ -145,7 +145,8 @@ exports.askGuestName = [
                 } else {
                     var message = new global._builder.Message(session);
                     message.text("confirm_guest_name",guestName);
-                    global._builder.Prompts.confirm(session, message);
+                    //global._builder.Prompts.confirm(session, message);
+                    next ({response: true});
                 }
             }
         }
@@ -186,15 +187,7 @@ exports.askGuestGender = [
 
          var message = new global._builder.Message(session);
          message.text(session.dialogData.questions[session.dialogData.index].prompt);
-        // message.attachmentLayout(global._builder.AttachmentLayout.list);
-        // var aCard = new global._builder.ThumbnailCard(session)
-        // .buttons([
-        //     //global._builder.CardAction.postBack(session, JSON.stringify(aHotel),'选择')
-        //     global._builder.CardAction.postBack(session, '女士', '女士'),  global._builder.CardAction.imBack(session, '先生', '先生')
-        // ])
-        // message.addAttachment(aCard);
-        //session.send(message);
-        message.suggestedActions(global._builder.SuggestedActions.create(session,
+         message.suggestedActions(global._builder.SuggestedActions.create(session,
             [
                 global._builder.CardAction.imBack(session, "女士", "女士"),
                 global._builder.CardAction.imBack(session, "先生", "先生")

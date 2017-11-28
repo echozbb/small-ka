@@ -58,7 +58,16 @@ exports.showOptionalHotels = [
                 if (quotes.length + startIndex >= totalCount) {
                     global._builder.Prompts.text(session, filterResult + "这些已经是符合条件的所有酒店了。您可以尝试更改星级或预算或日期以获取更多酒店");
                 } else {
+                    var message = new global._builder.Message(session);
+                    message.text("如果没有您想要的，请说 翻页");
+                    message.suggestedActions(global._builder.SuggestedActions.create(session,
+                       [
+                           global._builder.CardAction.imBack(session, "翻页", "翻页")
+                       ]
+                   ));
+
                     global._builder.Prompts.text(session, "如果没有您想要的，请说 翻页");
+
                 }
             } else {
                 session.privateConversationData.pendingAction = 'updateHotel'
@@ -79,7 +88,15 @@ exports.showOptionalHotels = [
                     //update request
                     session.replaceDialog('RequestHotel', {entities: entities});
                 } else {
-                    session.send('对不起，我不知道您的意思，如需帮助，请说 帮助');
+                    var message = new global._builder.Message(session);
+                    message.text("对不起，我不知道您的意思，如需帮助，请说 帮助");
+                    message.suggestedActions(global._builder.SuggestedActions.create(session,
+                       [
+                           global._builder.CardAction.imBack(session, "帮助", "帮助")
+                       ]
+                   ));
+                   //global._builder.Prompts.text(session, message);
+                   session.send(message);
                 }
             });
         }

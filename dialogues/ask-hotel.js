@@ -13,7 +13,16 @@ exports.askHotel =  [function (session, args, next) {
             //choose hotel
             session.beginDialog('choose_hotel')
         }  else {
-            global._builder.Prompts.text(session, "prompt_hotel");
+            var message = new global._builder.Message(session);
+            message.text("prompt_hotel");
+            message.suggestedActions(global._builder.SuggestedActions.create(session,
+                [
+                    global._builder.CardAction.imBack(session, "没有", "没有"),
+                    global._builder.CardAction.imBack(session, "希尔顿", "希尔顿"),
+                    global._builder.CardAction.imBack(session, "香格里拉", "香格里拉")
+                ]
+            ));
+            global._builder.Prompts.text(session, message);
         }
     },
     function (session, results, next) {

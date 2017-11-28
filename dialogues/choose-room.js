@@ -189,7 +189,7 @@ exports.confirmRoom = [
             message += "<br>" + "请选择您想要预订的价格"
             //optionRates['选择其他房型看看'] = 'None'
             session.dialogData.optionalRate = optionRates;
-            global._builder.Prompts.choice(session,message, optionRates, global._builder.ListStyle.list)
+            global._builder.Prompts.choice(session,message, optionRates, {listStyle: global._builder.ListStyle.list})
         } else {
             session.dialogData.choosedRoom = choosedRoomRate;
             next ({response: true});
@@ -249,7 +249,16 @@ exports.confirmRoom = [
 
             session.dialogData.confirmedRoom = choosedRoom;
             session.dialogData.confirmedRoom.confirmedPrice = totalPrice;
-            global._builder.Prompts.confirm(session, message);
+
+            var msg = new global._builder.Message(session);
+            msg.text(message);
+            msg.suggestedActions(global._builder.SuggestedActions.create(session,
+               [
+                   global._builder.CardAction.imBack(session, "确定", "确定"),
+                   global._builder.CardAction.imBack(session, "不确定", "不确定")
+               ]
+           ));
+            global._builder.Prompts.confirm(session, msg);
         }
 
        
