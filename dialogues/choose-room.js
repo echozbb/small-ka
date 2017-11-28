@@ -81,11 +81,14 @@ exports.chooseRoom = [
                     }
                     choice[rooms[i].roomName + ' | 每晚每间价格从 **AUD ' +  Math.round(rooms[i].price/nights) + '**起 | ' + breakfastStr + ' | ' + freeCancelStr] = aRoom
                     console.log('you have these choice: ' + JSON.stringify(choice));
-
+                    var description = breakfastStr + ' | ' + freeCancelStr;
+                    if (aRoom.bedTypeDesc != null) {
+                        description = description + ' | ' + aRoom.bedTypeDesc;
+                    }
 
                     var aCard = new global._builder.HeroCard(session)
                     .title(aRoom.roomName)
-                    .subtitle(breakfastStr + ' | ' + freeCancelStr + ' | ' + aRoom.bedTypeDesc)
+                    .subtitle(description)
                     .text('每晚每间价格从 **AUD ' +  Math.round(aRoom.price/nights) + '**起' )
                     //.images([global._builder.CardImage.create(session, quotes[i].thumbNailUrls[0])])
                     .buttons([
@@ -184,7 +187,7 @@ exports.confirmRoom = [
                 message +=  "<br>" + choosedRoom.facility
             }
             message += "<br>" + "请选择您想要预订的价格"
-            optionRates['选择其他房型看看'] = 'None'
+            //optionRates['选择其他房型看看'] = 'None'
             session.dialogData.optionalRate = optionRates;
             global._builder.Prompts.choice(session,message, optionRates, global._builder.ListStyle.list)
         } else {

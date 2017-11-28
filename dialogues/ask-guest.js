@@ -183,7 +183,19 @@ exports.askGuestGender = [
         session.dialogData.index = args.index ? args.index : 0;
         session.dialogData.form = args.form ? args.form : [];
         session.dialogData.questions = args.questions;
-        global._builder.Prompts.choice(session, session.dialogData.questions[session.dialogData.index].prompt, "女士|先生",global._builder.ListStyle.list);
+
+        // var message = new global._builder.Message(session);
+        // message.text(session.dialogData.questions[session.dialogData.index].prompt);
+        // message.attachmentLayout(global._builder.AttachmentLayout.list);
+        // var aCard = new global._builder.ThumbnailCard(session)
+        // .buttons([
+        //     //global._builder.CardAction.postBack(session, JSON.stringify(aHotel),'选择')
+        //     global._builder.CardAction.postBack(session, '女士', '女士'),  global._builder.CardAction.imBack(session, '先生', '先生')
+        // ])
+        // message.addAttachment(aCard);
+        //session.send(message);
+
+        global._builder.Prompts.choice(session, session.dialogData.questions[session.dialogData.index].prompt, "女士|先生",{listStyle: global._builder.ListStyle.button });
     },
     function (session, results) {
         var guest = session.dialogData.questions[session.dialogData.index++].field;
