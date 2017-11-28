@@ -156,7 +156,7 @@ exports.askGuestName = [
             var guests = session.dialogData.guestName.split(',');
             var questions = [];
             for (var i = 0; i < guests.length; i++) {
-                questions.push({field: guests[i], prompt: "请选择" + guests[i] + "是"});
+                questions.push({field: guests[i], prompt: "请问" + guests[i] + "是女士还是先生？"});
             }
             session.dialogData.questions = questions;
             session.beginDialog('askGuestGender',session.dialogData);
@@ -184,8 +184,8 @@ exports.askGuestGender = [
         session.dialogData.form = args.form ? args.form : [];
         session.dialogData.questions = args.questions;
 
-        // var message = new global._builder.Message(session);
-        // message.text(session.dialogData.questions[session.dialogData.index].prompt);
+         var message = new global._builder.Message(session);
+         message.text(session.dialogData.questions[session.dialogData.index].prompt);
         // message.attachmentLayout(global._builder.AttachmentLayout.list);
         // var aCard = new global._builder.ThumbnailCard(session)
         // .buttons([
@@ -194,15 +194,22 @@ exports.askGuestGender = [
         // ])
         // message.addAttachment(aCard);
         //session.send(message);
-
-        global._builder.Prompts.choice(session, session.dialogData.questions[session.dialogData.index].prompt, "女士|先生",{listStyle: global._builder.ListStyle.button });
+        message.suggestedActions(global._builder.SuggestedActions.create(session,
+            [
+                global._builder.CardAction.imBack(session, "女士", "女士"),
+                global._builder.CardAction.imBack(session, "先生", "先生")
+            ]
+        ));
+        global._builder.Prompts.text(session, message);
+        //session.send(message);
+        //global._builder.Prompts.choice(session, session.dialogData.questions[session.dialogData.index].prompt, "女士|先生",{listStyle: global._builder.ListStyle.button });
     },
     function (session, results) {
         var guest = session.dialogData.questions[session.dialogData.index++].field;
         var name = guest.trim().split(" ");
         var title = 'Mr';
         var title_zh = "先生";
-        if (results.response.index == 0) {
+        if (results.response == '女士') {
             title = 'Ms';
             title_zh = "女士";
         } 
