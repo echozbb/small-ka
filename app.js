@@ -118,6 +118,7 @@ bot.on('receive', function(args) {
     global._timeoutobject[user] = setTimeout(sendProactiveMessage, 120000, userAddress);
     //rgs.text = preprocessor.preprocess(args.text);
     global._logger.log('info', "parsed text:", {'text': args.text});    
+    console.log("parsed text:" + args.text);
 });
 bot.on('send', function (args){
     global._logger.log('info', "output text: ", {'text': args.text, 'user':  args.address});
