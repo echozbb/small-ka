@@ -69,9 +69,11 @@ module.exports  = {
             });
             if (aItem.length == 1) {
                 if (singleItems[i] == 'adOrch') {
-                    if (session.privateConversationData.hotelRequest['adultNum'] == null){
+                    //check key words after
+                    var key = message.substring(aItem[0].endIndex, aItem[0].endIndex + 3);
+                    if (/人|成/.test(key)) {
                         session.privateConversationData.hotelRequest['adultNum'] = aItem[0].value;
-                    } else if (session.privateConversationData.hotelRequest['childNum'] == null) {
+                    } else if (/儿|童/.test(key)) {
                         session.privateConversationData.hotelRequest['childNum'] = aItem[0].value;
                     }
                 } else {
