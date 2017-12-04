@@ -9,12 +9,13 @@ var botbuilder_azure = require("botbuilder-azure");
 var azure = require('azure-storage');
 var path = require('path');
 var winston = require('winston');
+//ar slack_rtm = require('./slack-rtm-service');
 
 //var Domain = require('./domain');
 //var Luis = require('./luis-service');
 var cognitiveservices = require('botbuilder-cognitiveservices');
 
-//var preprocessor = require('./utils/preprocessor');
+var preprocessor = require('./utils/preprocessor');
 
 const default_locale = 'zh-Hans';
 var useEmulator = (process.env.BotEnv == 'development');
@@ -61,12 +62,7 @@ var AskHotelWaterfall = require('./dialogues/ask-hotel').askHotel;
 var RequestHotelWaterfall = require('./dialogues/request-hotel').requestHotel;
 var ChooseHotelWaterfall = require('./dialogues/choose-hotel');
 var HelpWaterfall = require('./dialogues/help').help;
-//var AskDate = require('./dialogues/ask-date');
-//var AskPrice = require('./dialogues/ask-price');
-//var AskRegionWaterfall = require('./dialogues/ask-region').askRegion;
-//var AskStar = require('./dialogues/ask-star');
 var AskGuest = require('./dialogues/ask-guest');
-//var AskRooms = require('./dialogues/ask-rooms');
 var RequestActivityWaterfal = require('./dialogues/request-activity').requestActivity;
 var ChooseRooms = require('./dialogues/choose-room');
 var BookHotel = require('./dialogues/book-hotel');
@@ -76,6 +72,7 @@ var QNAMarker = require('./dialogues/qna-marker');
 var StartOver = require('./dialogues/start-over');
 var AskLocation = require('./dialogues/ask-location');
 var MapService =  require('./map-service');
+var Handoff = require('./dialogues/handoff');
 
 var restify = require('restify');
 // Setup Restify Server
@@ -116,7 +113,7 @@ bot.on('receive', function(args) {
     var user = args.user
     clearTimeout(global._timeoutobject[user]);
     global._timeoutobject[user] = setTimeout(sendProactiveMessage, 120000, userAddress);
-    //rgs.text = preprocessor.preprocess(args.text);
+    args.text = preprocessor.preprocess(args.text);
     global._logger.log('info', "parsed text:", {'text': args.text});    
     console.log("parsed text:" + args.text);
 });
@@ -163,6 +160,24 @@ bot.recognizer(qnaRecognizer);
 bot.recognizer(recognizer);
 bot.dialog('/', intents);
 
+// bot.use({
+//     botbuilder: function (session, next) {
+//         console.log("bot use middleware.");
+//         //session
+//         if (session.privateConversationData['inSlack'] == true) {
+//             //send message to slack
+//             slack_rtm.sendMessage(session.privateConversationData['slackId'],session.message['text']);
+//             //slack_rtm.clientReceive(session);
+//             //session.endDialog();
+//             session.message['text'] = "";
+//             next();
+//         } else {
+//             next();
+//         }
+       
+//     }
+// })
+
 intents.matches('Greeting', 'Greeting');
 intents.onDefault('Greeting');
 intents.matches('RequestHotel', 'RequestHotel').triggerAction({
@@ -190,7 +205,7 @@ bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver',
 bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
     matches: 'ChangeRequest', intentThreshold: 0.9
 });
-
+//bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
 bot.dialog('continue',[
     function (session, args) {
         if (session.privateConversationData.hotelRequest != null) {
