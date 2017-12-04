@@ -72,7 +72,7 @@ var QNAMarker = require('./dialogues/qna-marker');
 var StartOver = require('./dialogues/start-over');
 var AskLocation = require('./dialogues/ask-location');
 var MapService =  require('./map-service');
-var Handoff = require('./dialogues/handoff');
+//var Handoff = require('./dialogues/handoff');
 
 var restify = require('restify');
 // Setup Restify Server
@@ -205,7 +205,7 @@ bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver',
 bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
     matches: 'ChangeRequest', intentThreshold: 0.9
 });
-//bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
+bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
 bot.dialog('continue',[
     function (session, args) {
         if (session.privateConversationData.hotelRequest != null) {
