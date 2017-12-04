@@ -205,7 +205,7 @@ bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver',
 bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
     matches: 'ChangeRequest', intentThreshold: 0.9
 });
-bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
+//bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
 bot.dialog('continue',[
     function (session, args) {
         if (session.privateConversationData.hotelRequest != null) {
@@ -225,22 +225,8 @@ bot.dialog('Greeting', GreetingWaterfall);
 bot.dialog('askForCity', AskCityWaterfall);
 bot.dialog('askForHotel', AskHotelWaterfall);
 bot.dialog('choose_hotel', ChooseHotelWaterfall.chooseHotel);
-// bot.dialog('askCheckinCheckout', AskDate.askCheckinCheckout);
-// bot.dialog('askCheckin', AskDate.askCheckin);
-// bot.dialog('askCheckout', AskDate.askCheckout);
-// bot.dialog('askPrice', AskPrice.askPrice);
-// bot.dialog('askMinPrice', AskPrice.askMinPrice);
-// bot.dialog('askMaxPrice', AskPrice.askMaxPrice);
-// bot.dialog('askRegion', AskRegionWaterfall);
-// bot.dialog('askStar', AskStar.askStar);
-// bot.dialog('askMinStar', AskStar.askMinStar);
-// bot.dialog('askMaxStar', AskStar.askMaxStar);
 bot.dialog('askGuest', AskGuest.askGuest)
 bot.dialog('askGuestGender', AskGuest.askGuestGender);
-// bot.dialog('askAdult', AskGuest.askAdult);
-// bot.dialog('askChild', AskGuest.askChild);
-// bot.dialog('askChildAge', AskGuest.askChildAge);
-// bot.dialog('askRooms', AskRooms.askRooms);
 bot.dialog('askGuestName', AskGuest.askGuestName);
 bot.dialog('chooseRoom', ChooseRooms.chooseRoom);
 bot.dialog('confirmRoom', ChooseRooms.confirmRoom);
