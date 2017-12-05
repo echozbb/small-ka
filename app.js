@@ -9,7 +9,8 @@ var botbuilder_azure = require("botbuilder-azure");
 var azure = require('azure-storage');
 var path = require('path');
 var winston = require('winston');
-//ar slack_rtm = require('./slack-rtm-service');
+var slack_rtm = require('./slack-rtm-service');
+var Slack = require('./slack-service');
 
 //var Domain = require('./domain');
 //var Luis = require('./luis-service');
@@ -72,7 +73,7 @@ var QNAMarker = require('./dialogues/qna-marker');
 var StartOver = require('./dialogues/start-over');
 var AskLocation = require('./dialogues/ask-location');
 var MapService =  require('./map-service');
-//var Handoff = require('./dialogues/handoff');
+var Handoff = require('./dialogues/handoff');
 
 var restify = require('restify');
 // Setup Restify Server
@@ -160,23 +161,27 @@ bot.recognizer(qnaRecognizer);
 bot.recognizer(recognizer);
 bot.dialog('/', intents);
 
-// bot.use({
-//     botbuilder: function (session, next) {
-//         console.log("bot use middleware.");
-//         //session
-//         if (session.privateConversationData['inSlack'] == true) {
-//             //send message to slack
-//             slack_rtm.sendMessage(session.privateConversationData['slackId'],session.message['text']);
-//             //slack_rtm.clientReceive(session);
-//             //session.endDialog();
-//             session.message['text'] = "";
-//             next();
-//         } else {
-//             next();
-//         }
+bot.use({
+    botbuilder: function (session, next) {
+        console.log("bot use middleware.");
+        //session
+        if (session.privateConversationData['inSlack'] == true) {
+            //send message to slack
+            var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
+            if (success == true) {
+                session.message['text'] = "";
+            } else {
+                session.privateConversationData['inSlack'] = false;
+                session.privateConversationData['slackId'] = null;
+                session.send("Connection closed, small-ka will serve you");
+            }
+            next();
+        } else {
+            next();
+        }
        
-//     }
-// })
+    }
+})
 
 intents.matches('Greeting', 'Greeting');
 intents.onDefault('Greeting');
@@ -205,7 +210,7 @@ bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver',
 bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
     matches: 'ChangeRequest', intentThreshold: 0.9
 });
-//bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
+bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human/i});
 bot.dialog('continue',[
     function (session, args) {
         if (session.privateConversationData.hotelRequest != null) {

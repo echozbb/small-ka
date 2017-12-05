@@ -20,6 +20,7 @@
     "restify": "^4.3.1",
     "sinon": "^4.1.0",
     "uuid": "^3.1.0",
+    "websocket": "^1.0.25",
     "winston": "^2.4.0",
     "winston-azure-blob-transport": "^0.2.6"
   },
