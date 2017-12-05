@@ -95,6 +95,8 @@ exports.toSlack = [
                     console.log('botId-> ' + data.self['id']);
                     session.dialogData.message = message
                     Slack_rtm.clientConnect(data.url, session);
+                } else {
+                    session.send("out agent is too busy now, please try to connect later.");
                 }
             });
         } else {
