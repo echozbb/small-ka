@@ -20,10 +20,8 @@ function option(path, method){
 }
 
  function Post(path, resquestBody, cb) {
-    var token = "xoxp-9016632436-77390773506-279575177106-8fe3ce54a9c732ad2ce336eb57c07eb4"
-    //var token = "xoxb-280303360453-gNf2TnqfXdNj3jssVE5SSlgY";
     if (!/token/i.test(path)) {
-        var path = url_join(path, '&token=' + token )
+        var path = url_join(path, '&token=' + process.env.SLACK_ECHO_TOKEN )
     }
    
     var options = new option(path, 'POST');
@@ -46,9 +44,6 @@ function option(path, method){
         }
 
     });
-    //console.log('RequestBody: ' + jsonObject);
-    //global._logger.log('info', "slack-service.Post", {'RequestBody': jsonObject});
-    //reqPost.write(jsonObject);
     reqPost.end();
     reqPost.on('error', function(e){
         global._logger.log('error', "slack-service.Post", e);
@@ -57,17 +52,13 @@ function option(path, method){
 module.exports = {
     rtmConnect: function (){
         return new Promise (function (resolve) {
-            var token = "xoxb-280303360453-gNf2TnqfXdNj3jssVE5SSlgY";
-            var path = url_join("/api/rtm.connect", '?batch_presence_aware=false' ,"&pretty=1", '&token='+token);
+            var path = url_join("/api/rtm.connect", '?batch_presence_aware=false' ,"&pretty=1", '&token='+process.env.SLACK_BOT_TOKEN);
             Post(path, null, function (data) {
                 console.log(JSON.stringify(data));
                 resolve(JSON.parse(data));
             })
         });
     },
-    // connectWebSocket: function (url) {
-    //     clientConnect(url);
-    // },
 
     createConversation: function (name) {
         return new Promise (function (resolve) {
@@ -103,8 +94,7 @@ module.exports = {
     },
     sendMessage: function(channelId, message) {
         return new Promise (function (resolve) {
-            var token = "xoxb-280303360453-gNf2TnqfXdNj3jssVE5SSlgY";
-            var path = url_join("/api/chat.meMessage", '?channel=' + channelId, '&token='+token, '&text='+message, "&pretty=1");
+            var path = url_join("/api/chat.meMessage", '?channel=' + channelId, '&token='+process.env.SLACK_BOT_TOKEN, '&text='+message, "&pretty=1");
              Post(path, null, function (data) {
                 console.log(JSON.stringify(data));
                 resolve(JSON.parse(data));
