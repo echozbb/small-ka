@@ -29,7 +29,7 @@
                 "LUIS_ASSIST_MODEL_URL":"https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/a8402652-00c3-468d-9bc2-2a2c4c259b80?subscription-key=7148b349a20a4fb6b1e13fb49708429a&timezoneOffset=0&verbose=true&q=",
                 "GOOGLE_MAP_API_KEY": "AIzaSyAmeSgD0yn_Bn9ilNg_oADcZccbbNFhlC4",
                 "SLACK_BOT_TOKEN": "xoxb-280303360453-ed7RMzzdCW8HOCkFsXUTKDLh",
-                "SLACK_ECHO_TOKEN": "xoxp-9016632436-77390773506-279575177106-8fe3ce54a9c732ad2ce336eb57c07eb4"
+                "SLACK_ECHO_TOKEN": "xoxp-9016632436-77390773506-282253699378-df9900d98488873b74dbc67b864c36c3"
             }
         }
     ]
