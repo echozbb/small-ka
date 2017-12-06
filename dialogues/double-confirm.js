@@ -120,6 +120,7 @@ exports.doubleConfirm = [
                 global._builder.LuisRecognizer.recognize(results.response, process.env.LUIS_MODEL_URL,function(err, intents, entities){
                     if (err) {
                         global._logger.log('info','double-confirm','call LUIS error: ' + err);
+                        session.beginDialog('handoff',{text:'对不起，我不知道您说的什么意思, 将为您转到人工服务'});
                     }
                     if (entities == null || entities.length == 0) {
                         //check possible value by missing items
@@ -161,7 +162,8 @@ exports.doubleConfirm = [
                                 next({response:true});
                             } 
                             else {
-                                session.send('对不起，我不知道您说的什么意思。');
+                                //session.send('对不起，我不知道您说的什么意思。');
+                                session.beginDialog('handoff',{text:'对不起，我不知道您说的什么意思,将为您转到人工服务'});
                                 next({response:true});
                             }
                         }

@@ -82,6 +82,7 @@ exports.updateByIntents = [
             global._builder.LuisRecognizer.recognize(results.response, process.env.LUIS_MODEL_URL,function(err, intents, entities){
                 if (err) {
                     console.log(err);
+                    session.beginDialog('handoff',{text:'对不起，我不知道您说的什么意思,将为您转到人工服务'});
                 }
                 global._logger.log('info','update info', {'intents': JSON.stringify(intents)});
                 global._logger.log('info','update info', {'entities': JSON.stringify(entities)});

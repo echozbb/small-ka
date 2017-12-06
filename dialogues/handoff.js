@@ -2,22 +2,30 @@ var Slack = require('../slack-service');
 var Slack_rtm = require('../slack-rtm-service');
 
 exports.toSlack = [
-    function(session) {
-        var message = new global._builder.Message(session);
-        message.text("您确定要转到人工吗？这将会需要一些等待时间");
-        message.suggestedActions(global._builder.SuggestedActions.create(session,
-           [
-               global._builder.CardAction.imBack(session, "是的", "是的"),
-               global._builder.CardAction.imBack(session, "不是", "不是")
-           ]
-       ));
-       global._builder.Prompts.confirm(session, message);
+    function(session, args, next) {
+        if (args != null && args.text != null) {
+            var message = new global._builder.Message(session);
+            message.text(args.text);
+            session.send(message);
+            next({response: true});
+        } else {
+            var message = new global._builder.Message(session);
+            message.text("您确定要转到人工吗？这将会需要一些等待时间");
+            message.suggestedActions(global._builder.SuggestedActions.create(session,
+               [
+                   global._builder.CardAction.imBack(session, "是的", "是的"),
+                   global._builder.CardAction.imBack(session, "不是", "不是")
+               ]
+           ));
+           global._builder.Prompts.confirm(session, message);
+        }
+       
     },
     function (session, result, next) {
         if (result.response) {
             console.log("connecting to slack....");
             var gpName = session.userData.savedAddress.id
-            gpName = 'sp_' + gpName.substring(0, 9);
+            gpName = 'sk_' + gpName.substring(0, 9);
             //TODO:
             //session.privateConversationData.slackId="G8963FMBK"
             var slackId = session.privateConversationData.slackId;

@@ -2,111 +2,140 @@ var Hotel = require('../hotel-service');
 var Utils = require('../utils/utils');
 
 exports.chooseRoom = [
-    function (session, args) {
-        global._logger.log('info', 'ChooseRoom', session.privateConversationData.hotelRequest.hotelUuid);
+    function (session, args, next) {
         var dateOffSet = args == null || args.dateOffSet == null ? 0 : args.dateOffSet;
-        var multiRequest = null;
-        if (dateOffSet == 0) {
-            var message = 'searching_hotel';
-            var hotelUuid = session.privateConversationData.hotelRequest.hotelUuid;
-            Hotel.sendHotelDetails(session, hotelUuid);
-            multiRequest = Utils.buildMultiRoomRequest(session.privateConversationData.hotelRequest);
-            session.send(message, session.privateConversationData.hotelRequest.hotelName, multiRequest.rooms, multiRequest.arrival, multiRequest.departure,
-                multiRequest.roomGuests[0].adults, multiRequest.roomGuests[0].children);  
-        } else if (Math.abs(dateOffSet) > 5) {
-            session.send('对不起，前后五天都找不到合适房间，请选择其他酒店。');
-            //TODO: choose another date
+        session.dialogData.dateOffSet = dateOffSet
+        if (dateOffSet == 1) {
+            message.text("需要小卡为您查询前后5天的酒店吗？");
+            message.suggestedActions(global._builder.SuggestedActions.create(session,
+                [
+                    global._builder.CardAction.imBack(session, "好的", "好的"),
+                    global._builder.CardAction.imBack(session, "不好", "不好"),
+                ]
+            ));
+
+            global._builder.Prompts.confirm(message);
+        } else {
+            next ({response: true});
+        }
+    },
+    function (session, args) {
+        if (args.response == false) {
+            session.endDialog('请选择其他酒店');
             session.privateConversationData.hotelRequest.hotelUuid = null;
             session.privateConversationData.hotelRequest.hotelName = null;
             session.privateConversationData.hotelRequest.minStar = null;
             session.privateConversationData.hotelRequest.maxStar = null;
             session.privateConversationData.hotelRequest.possibleHotelName = null;
-            
         } else {
-            var message = new global._builder.Message(session);
-            var dstr;
-            if (dateOffSet < 0) {
-                dstr = '前' + parseInt(dateOffSet*-1)
-            } else {
-                dstr = '后' + parseInt(dateOffSet)
-            }
-            var rqstStr = JSON.stringify(session.privateConversationData.hotelRequest);
-            var request = JSON.parse(rqstStr)
-            request.fromDate = Utils.formatDate(Utils.getDateFrom(request.fromDate,dateOffSet));
-            if (Utils.isAfterToday(request.fromDate)) {  //only search the date after today
-                request.toDate = Utils.formatDate(Utils.getDateFrom(request.toDate,dateOffSet));
-                multiRequest = Utils.buildMultiRoomRequest(request);
-                message.text('为您查找%s天的空房情况. %s入住，%s退房',dstr,request.fromDate,request.toDate)
-                session.send(message);
-            }
-        } 
-        //calculate offset date
-        if (dateOffSet == 0) session.dialogData.dateOffSet = 1;
-        else if (dateOffSet > 0) session.dialogData.dateOffSet = parseInt(dateOffSet * -1)
-        else session.dialogData.dateOffSet = parseInt(Math.abs(dateOffSet) + 1)
-        
-        if (session.privateConversationData.hotelRequest.hotelUuid == null) {
-            //do nothing, jummp to askForHotel
-            session.replaceDialog('askForHotel');
-        } else if (multiRequest == null) {
-            session.replaceDialog('chooseRoom',{dateOffSet: session.dialogData.dateOffSet});
-        } else {
-            session.dialogData.multiRequest = multiRequest;
-            var nights = Utils.getNights(multiRequest.arrival, multiRequest.departure);
-            session.sendTyping();
-            Hotel.getRoomTypes(session.privateConversationData.hotelRequest.hotelUuid, multiRequest).catch(e => {
-                global._logger.log('info','chooseRoom.getRoomTypes', e);
-                //session.send("no_rooms_found")
-            }).then(function (rooms, reject) {
-                //optimze result
-                global._logger.log('info','bedType-filtering','going to filtering the bedtype by '+ session.privateConversationData.hotelRequest.bedType);
-                rooms = Utils.optimizeRoomsResult(session, rooms, multiRequest);
-                global._logger.log("info","choose-room","rooms after optimize result -> " + JSON.stringify(rooms));
-                var choice = {};
-                var msg = new global._builder.Message(session);
-                msg.attachmentLayout(global._builder.AttachmentLayout.carousel); //carousel
 
-
-                for (var i=0; i < rooms.length && i<6; i++) {
-                    var aRoom = rooms[i];
-                    aRoom['rooms'] = multiRequest.rooms;
-                    var breakfastStr = "不含早";
-                    if (rooms[i].breakfast == true) {
-                        breakfastStr = "含早";
-                    } 
-                    aRoom['breakfastStr'] = breakfastStr;
-                    var freeCancelStr = "不可免费取消";
-                    if (rooms[i].freeCancellation == true) {
-                        freeCancelStr = "可免费取消";
-                    }
-                    choice[rooms[i].roomName + ' | 每晚每间价格从 **AUD ' +  Math.round(rooms[i].price/nights) + '**起 | ' + breakfastStr + ' | ' + freeCancelStr] = aRoom
-                    console.log('you have these choice: ' + JSON.stringify(choice));
-                    var description = breakfastStr + ' | ' + freeCancelStr;
-                    if (aRoom.bedTypeDesc != null) {
-                        description = description + ' | ' + aRoom.bedTypeDesc;
-                    }
-
-                    var aCard = new global._builder.HeroCard(session)
-                    .title(aRoom.roomName)
-                    .subtitle(description)
-                    .text('每晚每间价格从 **AUD ' +  Math.round(aRoom.price/nights) + '**起' )
-                    //.images([global._builder.CardImage.create(session, quotes[i].thumbNailUrls[0])])
-                    .buttons([
-                        //global._builder.CardAction.postBack(session, JSON.stringify(aHotel),'选择')
-                        global._builder.CardAction.dialogAction(session, 'chooseRoomAction', JSON.stringify({room:aRoom, multiRequest: multiRequest}),'选择房型')
-                    ])
-                    msg.addAttachment(aCard);
-                }
+            global._logger.log('info', 'ChooseRoom', session.privateConversationData.hotelRequest.hotelUuid);
+            //var dateOffSet = args == null || args.dateOffSet == null ? 0 : args.dateOffSet;
+            var dateOffSet = session.dialogData.dateOffSet;
+            var multiRequest = null;
+            if (dateOffSet == 0) {
+                var message = 'searching_hotel';
+                var hotelUuid = session.privateConversationData.hotelRequest.hotelUuid;
+                Hotel.sendHotelDetails(session, hotelUuid);
+                multiRequest = Utils.buildMultiRoomRequest(session.privateConversationData.hotelRequest);
+                session.send(message, session.privateConversationData.hotelRequest.hotelName, multiRequest.rooms, multiRequest.arrival, multiRequest.departure,
+                    multiRequest.roomGuests[0].adults, multiRequest.roomGuests[0].children);  
+            } else if (Math.abs(dateOffSet) > 5) {
+                session.send('对不起，前后五天都找不到合适房间，请选择其他酒店。');
+                //TODO: choose another date
+                session.privateConversationData.hotelRequest.hotelUuid = null;
+                session.privateConversationData.hotelRequest.hotelName = null;
+                session.privateConversationData.hotelRequest.minStar = null;
+                session.privateConversationData.hotelRequest.maxStar = null;
+                session.privateConversationData.hotelRequest.possibleHotelName = null;
                 
-                if (rooms.length >= 1) {
-                    session.send(msg);
-                    //session.beginDialog('confirmRoom', {'choice': choice, 'multiRequest': multiRequest})
-                    //global._builder.Prompts.choice(session, message, choice, global._builder.ListStyle.list);
+            } else {
+                var message = new global._builder.Message(session);
+                var dstr;
+                if (dateOffSet < 0) {
+                    dstr = '前' + parseInt(dateOffSet*-1)
                 } else {
-                    session.send('no_rooms_found');
-                    session.replaceDialog('chooseRoom',{dateOffSet: session.dialogData.dateOffSet});
+                    dstr = '后' + parseInt(dateOffSet)
                 }
-            });
+                var rqstStr = JSON.stringify(session.privateConversationData.hotelRequest);
+                var request = JSON.parse(rqstStr)
+                request.fromDate = Utils.formatDate(Utils.getDateFrom(request.fromDate,dateOffSet));
+                if (Utils.isAfterToday(request.fromDate)) {  //only search the date after today
+                    request.toDate = Utils.formatDate(Utils.getDateFrom(request.toDate,dateOffSet));
+                    multiRequest = Utils.buildMultiRoomRequest(request);
+                    message.text('为您查找%s天的空房情况. %s入住，%s退房',dstr,request.fromDate,request.toDate)
+                    session.send(message);
+                }
+            } 
+            //calculate offset date
+            if (dateOffSet == 0) session.dialogData.dateOffSet = 1;
+            else if (dateOffSet > 0) session.dialogData.dateOffSet = parseInt(dateOffSet * -1)
+            else session.dialogData.dateOffSet = parseInt(Math.abs(dateOffSet) + 1)
+            
+            if (session.privateConversationData.hotelRequest.hotelUuid == null) {
+                //do nothing, jummp to askForHotel
+                session.replaceDialog('askForHotel');
+            } else if (multiRequest == null) {
+                session.replaceDialog('chooseRoom',{dateOffSet: session.dialogData.dateOffSet});
+            } else {
+                session.dialogData.multiRequest = multiRequest;
+                var nights = Utils.getNights(multiRequest.arrival, multiRequest.departure);
+                session.sendTyping();
+                Hotel.getRoomTypes(session.privateConversationData.hotelRequest.hotelUuid, multiRequest).catch(e => {
+                    global._logger.log('info','chooseRoom.getRoomTypes', e);
+                    session.beginDialog('handoff',{text:'对不起，无法找到合适房间, 将为您转到人工服务'});
+                    //session.send("no_rooms_found")
+                }).then(function (rooms, reject) {
+                    //optimze result
+                    global._logger.log('info','bedType-filtering','going to filtering the bedtype by '+ session.privateConversationData.hotelRequest.bedType);
+                    rooms = Utils.optimizeRoomsResult(session, rooms, multiRequest);
+                    global._logger.log("info","choose-room","rooms after optimize result -> " + JSON.stringify(rooms));
+                    var choice = {};
+                    var msg = new global._builder.Message(session);
+                    msg.attachmentLayout(global._builder.AttachmentLayout.carousel); //carousel
+
+
+                    for (var i=0; i < rooms.length && i<6; i++) {
+                        var aRoom = rooms[i];
+                        aRoom['rooms'] = multiRequest.rooms;
+                        var breakfastStr = "不含早";
+                        if (rooms[i].breakfast == true) {
+                            breakfastStr = "含早";
+                        } 
+                        aRoom['breakfastStr'] = breakfastStr;
+                        var freeCancelStr = "不可免费取消";
+                        if (rooms[i].freeCancellation == true) {
+                            freeCancelStr = "可免费取消";
+                        }
+                        choice[rooms[i].roomName + ' | 每晚每间价格从 **AUD ' +  Math.round(rooms[i].price/nights) + '**起 | ' + breakfastStr + ' | ' + freeCancelStr] = aRoom
+                        console.log('you have these choice: ' + JSON.stringify(choice));
+                        var description = breakfastStr + ' | ' + freeCancelStr;
+                        if (aRoom.bedTypeDesc != null) {
+                            description = description + ' | ' + aRoom.bedTypeDesc;
+                        }
+
+                        var aCard = new global._builder.HeroCard(session)
+                        .title(aRoom.roomName)
+                        .subtitle(description)
+                        .text('每晚每间价格从 **AUD ' +  Math.round(aRoom.price/nights) + '**起' )
+                        //.images([global._builder.CardImage.create(session, quotes[i].thumbNailUrls[0])])
+                        .buttons([
+                            //global._builder.CardAction.postBack(session, JSON.stringify(aHotel),'选择')
+                            global._builder.CardAction.dialogAction(session, 'chooseRoomAction', JSON.stringify({room:aRoom, multiRequest: multiRequest}),'选择房型')
+                        ])
+                        msg.addAttachment(aCard);
+                    }
+                    
+                    if (rooms.length >= 1) {
+                        session.send(msg);
+                        //session.beginDialog('confirmRoom', {'choice': choice, 'multiRequest': multiRequest})
+                        //global._builder.Prompts.choice(session, message, choice, global._builder.ListStyle.list);
+                    } else {
+                        session.send('no_rooms_found');
+                        session.replaceDialog('chooseRoom',{dateOffSet: session.dialogData.dateOffSet});
+                    }
+                });
+            }
         }
     }
 ]

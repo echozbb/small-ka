@@ -33,11 +33,17 @@ exports.askLocation = [
         }
         if (session.privateConversationData.hotelRequest.preferredLocation != null && session.privateConversationData.hotelRequest.latitude == null) {
             global._logger.log('info','ask-location',{'preferredLocation':session.privateConversationData.hotelRequest.preferredLocation})
-            City.fillPreferredLocation(session.privateConversationData.hotelRequest.cityCode, session.privateConversationData.hotelRequest.preferredLocation, session).then(function(){
+            City.fillPreferredLocation(session.privateConversationData.hotelRequest.cityCode, session.privateConversationData.hotelRequest.preferredLocation, session)
+            .catch(e => {
+                global._logger.log('info','askLocation', e);
+                session.beginDialog('handoff',{text:'对不起，无法找到合适位置,将为您转到人工服务'});
+            })
+            .then(function(){
                 if (session.privateConversationData.hotelRequest.latitude == null) {
-                    session.privateConversationData.hotelRequest.preferredLocation = null;
-                    session.send("对不起，小卡无法识别您输入的地址，请换种表述方式");
-                    session.replaceDialog('askLocation');
+                    //session.privateConversationData.hotelRequest.preferredLocation = null;
+                    //session.send("对不起，小卡无法识别您输入的地址，请换种表述方式");
+                    session.beginDialog('handoff',{text:'对不起，无法找到合适位置,将为您转到人工服务'});
+                    //session.replaceDialog('askLocation');
                 } else {
                     session.endDialog();
                 }

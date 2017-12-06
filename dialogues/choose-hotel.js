@@ -32,6 +32,7 @@ exports.showOptionalHotels = [
         session.sendTyping();
         Hotel.searchHotel(multiRequest,startIndex).catch(e => {
             global._logger.log('info','chooseHotel.searchHotel', e);
+            session.beginDialog('handoff',{text:'对不起，无法为您找到酒店,将为您转到人工服务'});
         }).then(function(object, reject){
             var quotes = object.quotes;
             var extraInfo = object.extraInfo;
@@ -65,9 +66,7 @@ exports.showOptionalHotels = [
                            global._builder.CardAction.imBack(session, "翻页", "翻页")
                        ]
                    ));
-
                     global._builder.Prompts.text(session, "如果没有您想要的，请说 翻页");
-
                 }
             } else {
                 session.privateConversationData.pendingAction = 'updateHotel'
@@ -88,15 +87,16 @@ exports.showOptionalHotels = [
                     //update request
                     session.replaceDialog('RequestHotel', {entities: entities});
                 } else {
-                    var message = new global._builder.Message(session);
-                    message.text("对不起，我不知道您的意思，如需帮助，请说 帮助");
-                    message.suggestedActions(global._builder.SuggestedActions.create(session,
-                       [
-                           global._builder.CardAction.imBack(session, "帮助", "帮助")
-                       ]
-                   ));
-                   //global._builder.Prompts.text(session, message);
-                   session.send(message);
+                    // var message = new global._builder.Message(session);
+                    // message.text("对不起，我不知道您的意思，如需帮助，请说 帮助");
+                    session.beginDialog('handoff',{text:'对不起，我不知道您的意思,将为您转到人工服务'});
+                //     message.suggestedActions(global._builder.SuggestedActions.create(session,
+                //        [
+                //            global._builder.CardAction.imBack(session, "帮助", "帮助")
+                //        ]
+                //    ));
+                //    //global._builder.Prompts.text(session, message);
+                //    session.send(message);
                 }
             });
         }

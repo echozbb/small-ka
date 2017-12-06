@@ -38,21 +38,25 @@ module.exports = {
                         try{
                             Cozi.Get('/locationService/autocomplete/' + input + '/zh_CN',function(data){
                                 global._logger.log('info','city-service',{'autocomplete': data});
-                                var predictions = JSON.parse(data).payload.locations;
-                                if (predictions != null && predictions.length > 0) {
-                                    resolve(predictions[0]);
-                                } else {
-                                    //search by city name
-                                    input = encodeURIComponent((city.chineseName == null ? city.name : city.chineseName) + ' ' + place)
-                                    Cozi.Get('/locationService/autocomplete/' + input + '/zh_CN',function(data){
-                                        global._logger.log('info','city-service',{'autocomplete': data});
-                                        var predictions = JSON.parse(data).payload.locations;
-                                        if (predictions != null && predictions.length > 0) {
-                                            resolve(predictions[0]);
-                                        } else {
-                                            resolve(null);
-                                        }
-                                    })
+                                try {
+                                    var predictions = JSON.parse(data).payload;
+                                    if (predictions != null && predictions.locations.length > 0) {
+                                        resolve(predictions.locations[0]);
+                                    } else {
+                                        //search by city name
+                                        input = encodeURIComponent((city.chineseName == null ? city.name : city.chineseName) + ' ' + place)
+                                        Cozi.Get('/locationService/autocomplete/' + input + '/zh_CN',function(data){
+                                            global._logger.log('info','city-service',{'autocomplete': data});
+                                            var predictions = JSON.parse(data).payload;
+                                            if (predictions != null && predictions.locations.length > 0) {
+                                                resolve(predictions.locations[0]);
+                                            } else {
+                                                resolve(null);
+                                            }
+                                        })
+                                    }
+                                }catch (err) {
+                                    resolve(null);
                                 }
                             })
                         }catch (err) {
