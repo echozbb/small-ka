@@ -26,7 +26,8 @@ module.exports = {
                     if (city == null) {
                         resolve(null);
                     } else {
-                        var cityName = city.stateCode == null ? (city.chineseName == null ? city.name : city.chineseName) : city.stateCode;
+                        //var cityName = city.stateCode == null ? (city.chineseName == null ? city.name : city.chineseName) : city.stateCode;
+                        cityName = (city.chineseName == null ? city.name : city.chineseName);
                         var input = encodeURIComponent(place + ' ' + cityName)
                         //specimal handling on CBD
                         if (place.toUpperCase().indexOf('CBD') > -1) {
@@ -39,7 +40,13 @@ module.exports = {
                             Cozi.Get('/locationService/autocomplete/' + input + '/zh_CN',function(data){
                                 global._logger.log('info','city-service',{'autocomplete': data});
                                 try {
-                                    var predictions = JSON.parse(data).payload;
+                                    var predictions = null;
+                                    if (data == "{payload: null}") {
+                                        predictions = null;
+                                    } else {
+                                        predictions = JSON.parse(data).payload;
+                                    }
+                                    
                                     if (predictions != null && predictions.locations.length > 0) {
                                         resolve(predictions.locations[0]);
                                     } else {
@@ -47,17 +54,31 @@ module.exports = {
                                         input = encodeURIComponent((city.chineseName == null ? city.name : city.chineseName) + ' ' + place)
                                         Cozi.Get('/locationService/autocomplete/' + input + '/zh_CN',function(data){
                                             global._logger.log('info','city-service',{'autocomplete': data});
-                                            var predictions = JSON.parse(data).payload;
-                                            if (predictions != null && predictions.locations.length > 0) {
-                                                resolve(predictions.locations[0]);
-                                            } else {
+                                            try {
+                                                var predictions = null;
+                                                if (data == '{payload: null}') {
+                                                    predictions = null
+                                                } else {
+                                                    predictions = JSON.parse(data).payload;
+                                                }
+                                                if (predictions != null && predictions.locations.length > 0) {
+                                                    resolve(predictions.locations[0]);
+                                                } else {
+                                                    resolve(null);
+                                                }
+                                            } catch(err) {
+                                                console.log(err);
                                                 resolve(null);
                                             }
+                                           
                                         })
                                     }
-                                }catch (err) {
+                                } catch (err) {
+                                    console.log(err);
                                     resolve(null);
                                 }
+                                
+                               
                             })
                         }catch (err) {
                             global._logger.log('info','city-service', err);
