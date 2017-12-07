@@ -37,7 +37,7 @@ module.exports = {
                         } else {
                             //to TA via chatbot
                             if (msg.text.startsWith('say:')) {
-                                var text = msg.text.substring(0,4);
+                                var text = msg.text.substring(5,msg.text.length);
                                 session.send(text);
                             }
                             // if (session.privateConversationData['onlySlack']== true && msg.text != 'handoff') {

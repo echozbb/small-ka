@@ -115,12 +115,12 @@ exports.toSlack = [
                     message = message + "\n" + JSON.stringify(requestInfo);
                 }
                 if (session.dialogData.confirmedRoom != null) {
-                    message = message + "\n" + "the customer has an onRequest room for your confirm."
+                    message = message + "\n" + "**the customer has an onRequest room for your confirm.**"
                     message = message + "\n" + JSON.stringify(session.dialogData.confirmedRoom);
                 }
             } else {
                 message = "Hi team, we have a connection from small-ka, you are currently in slient monitor mode";
-                message = message + "\n" + "if want to speack to the agent directly, please say handoff"
+                message = message + "\n" + "if want to speack to the agent directly, please use the format-> say:xxxxx"
             }
             var success = Slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],message);
             if (!success) {
