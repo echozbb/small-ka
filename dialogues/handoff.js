@@ -83,12 +83,13 @@ exports.toSlack = [
                 
             }
         } else {
-            session.end("our bot will serve you");
+            //session.end("小卡将继续为您服务，如需联系客服请随时说 转人工");
+            session.endDialog("小卡将继续为您服务，如需联系客服请随时说 转人工");
         }
     },
     function (session, result) {
         if (result.response == true) {
-            session.send("Rebecca is talking to you now.");
+            session.send("您已连接到Cozitrip金牌客服");
             //send init request to slack group
             var requestInfo = session.privateConversationData.hotelRequest;
             var message = "Hi Rebecca, you have a customer from Small-Ka, please help."
@@ -104,11 +105,11 @@ exports.toSlack = [
                     session.dialogData.message = message
                     Slack_rtm.clientConnect(data.url, session);
                 } else {
-                    session.send("out agent is too busy now, please try to connect later.");
+                    session.send("对不起，客服繁忙，请稍后再试。");
                 }
             });
         } else {
-            session.send("out agent is too busy now, please try to connect later.");
+            session.send("对不起，客服繁忙，请稍后再试。");
         }
     }
 

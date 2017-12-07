@@ -287,13 +287,14 @@ exports.confirmRoom = [
                    global._builder.CardAction.imBack(session, "不确定", "不确定")
                ]
            ));
-            global._builder.Prompts.confirm(session, msg);
+            global._builder.Prompts.confirm(session, msg,{maxRetries: 1});
         }
-
        
     },
     function (session, results) {
-         if (results.response == true) {
+         if (result.resumed) {
+            session.beginDialog('handoff',{text:'对不起，小卡不明白您的意思,将为您转到人工服务'});
+         } else if (results.response == true) {
              //start booking
              session.privateConversationData.hotelRequest.fromDate = session.dialogData.multiRequest.arrival
              session.privateConversationData.hotelRequest.toDate = session.dialogData.multiRequest.departure

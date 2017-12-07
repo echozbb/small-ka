@@ -183,6 +183,8 @@ bot.use({
     }
 })
 
+
+
 intents.matches('Greeting', 'Greeting');
 intents.onDefault('Greeting');
 intents.matches('RequestHotel', 'RequestHotel').triggerAction({
