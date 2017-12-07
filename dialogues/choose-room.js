@@ -297,7 +297,7 @@ exports.confirmRoom = [
          } else if (results.response == true) {
              if (session.dialogData.confirmedRoom.onRequest == true) {
                  //on request
-                 session.beginDialog('handoff',{text:'将为您转到人工服务进行确认，请稍等', choosedRoom: session.dialogData.confirmedRoom});
+                 session.beginDialog('handoff',{text:'将为您转到人工服务进行确认，请稍等', choosedRoom: session.dialogData.confirmedRoom, silent: false});
              } else {
                 //start booking
                 session.privateConversationData.hotelRequest.fromDate = session.dialogData.multiRequest.arrival
