@@ -7,6 +7,7 @@ exports.toSlack = [
             var message = new global._builder.Message(session);
             message.text(args.text);
             session.send(message);
+            session.dialogData.confirmedRoom = args.choosedRoom;
             next({response: true});
         } else {
             var message = new global._builder.Message(session);
@@ -83,7 +84,6 @@ exports.toSlack = [
                 
             }
         } else {
-            //session.end("小卡将继续为您服务，如需联系客服请随时说 转人工");
             session.endDialog("小卡将继续为您服务，如需联系客服请随时说 转人工");
         }
     },
@@ -95,6 +95,10 @@ exports.toSlack = [
             var message = "Hi Rebecca, you have a customer from Small-Ka, please help."
             if (requestInfo != null) {
                 message = message + "\n" + JSON.stringify(requestInfo);
+            }
+            if (session.dialogData.confirmedRoom != null) {
+                message = message + "\n" + "the customer has an onRequest room for your confirm."
+                message = message + "\n" + JSON.stringify(session.dialogData.confirmedRoom);
             }
             //rtm connect
             Slack.rtmConnect().catch(e => console.log(e)).then(function(data) {

@@ -32,13 +32,15 @@ exports.askCity = [
             CityService.searchCity(results.response)
             .catch(err => {
                 global._logger.log('info','askCity',err);
-                session.send('invalid_city');
-                session.replaceDialog('askForCity');
+                // session.send('invalid_city');
+                // session.replaceDialog('askForCity');
+                session.beginDialog('handoff',{text:'对不起，小卡不认识这个地方,将为您转到人工服务'});
             })
             .then(result => {
                 if (result == null) {
                     session.send('invalid_city');
                     session.replaceDialog('askForCity');
+                    //session.beginDialog('handoff',{text:'对不起，小卡不认识这个地方,将为您转到人工服务'});
                 } else {
                     session.send('好的，您计划前往' + result.name);
                     //session.privateConversationData.hotelRequest.cityCode = result.name;

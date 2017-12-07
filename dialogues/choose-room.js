@@ -292,14 +292,18 @@ exports.confirmRoom = [
        
     },
     function (session, results) {
-         if (result.resumed) {
+         if (results.resumed) {
             session.beginDialog('handoff',{text:'对不起，小卡不明白您的意思,将为您转到人工服务'});
          } else if (results.response == true) {
-             //start booking
-             session.privateConversationData.hotelRequest.fromDate = session.dialogData.multiRequest.arrival
-             session.privateConversationData.hotelRequest.toDate = session.dialogData.multiRequest.departure
-             session.beginDialog('book',{'confirmedRoom': session.dialogData.confirmedRoom});
-             //session.endDialogWithResult({'response': session.dialogData.confirmedRoom});
+             if (session.dialogData.confirmedRoom.onRequest == true) {
+                 //on request
+                 session.beginDialog('handoff',{text:'将为您转到人工服务进行确认，请稍等', choosedRoom: session.dialogData.confirmedRoom});
+             } else {
+                //start booking
+                session.privateConversationData.hotelRequest.fromDate = session.dialogData.multiRequest.arrival
+                session.privateConversationData.hotelRequest.toDate = session.dialogData.multiRequest.departure
+                session.beginDialog('book',{'confirmedRoom': session.dialogData.confirmedRoom});
+             }
          } else {
              //this.buildRoomOption(session.dialogData.roomChoice, null);   
              var message = "请重新选择:"
