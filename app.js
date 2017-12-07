@@ -148,7 +148,7 @@ bot.on('receive', function(args) {
 function sendProactiveMessage(address) {
     global._logger.log('info','sending ProactiveMessage to address' + address.toString);
     var msg = new global._builder.Message().address(address);
-    msg.text('您如果需要帮助，请说 帮助，如需接驳人工服务请说 转人工');
+    msg.text('您如果需要帮助，请说 帮助');
     bot.send(msg);
   }
 //send proactive message done
@@ -215,7 +215,6 @@ bot.dialog('startOver',StartOver.startOver).triggerAction({matches: 'StartOver',
 bot.dialog('updateByIntents', UpdateInfo.updateByIntents).triggerAction({
     matches: 'ChangeRequest', intentThreshold: 0.9
 });
-bot.dialog('handoff', Handoff.toSlack).triggerAction({matches: /human|人工/i});
 bot.dialog('continue',[
     function (session, args) {
         if (session.privateConversationData.hotelRequest != null) {
@@ -248,6 +247,7 @@ bot.dialog('confirmConfilict', DoubleConfirm.confirmConfilict);
 bot.dialog('confirmHotel',ChooseHotelWaterfall.confirmHotel);
 bot.dialog('showOptionalHotel', ChooseHotelWaterfall.showOptionalHotels);
 bot.dialog('askLocation', AskLocation.askLocation);
+bot.dialog('handoff', Handoff.toSlack);//.triggerAction({matches: /human|人工/i});
 bot.dialog('showDistance', AskLocation.showDistance).triggerAction({
     matches: 'ChangeRequest', intentThreshold: 0.9
     // onInterrupted: function (session, dialogId, dialogArgs, next) {
