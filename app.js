@@ -117,10 +117,33 @@ bot.on('receive', function(args) {
     args.text = preprocessor.preprocess(args.text);
     global._logger.log('info', "parsed text:", {'text': args.text});    
     console.log("parsed text:" + args.text);
-});
-bot.on('send', function (args){
+}).on('send', function (args){
     global._logger.log('info', "output text: ", {'text': args.text, 'user':  args.address});
-});
+}).use({
+    botbuilder: function (session, next) {
+        console.log("bot use middleware.");
+        //session
+        if (session.privateConversationData['inSlack'] == true) {
+            //send message to slack
+           var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
+            if (success == true) {
+                if (session.privateConversationData['onlySlack'] == true) session.message['text'] = "";
+            } else {
+                session.beginDialog('handoff',{text:'',silent: true});
+                // session.privateConversationData['inSlack'] = false;
+                // session.privateConversationData['slackId'] = null;
+                // session.send("Connection closed, small-ka will serve you");
+            }
+            next();
+        } else {
+            //connect to slack
+            session.beginDialog('handoff',{text:'',silent: true});
+            next();
+        }
+       
+    }
+})
+
 
 function sendProactiveMessage(address) {
     global._logger.log('info','sending ProactiveMessage to address' + address.toString);
@@ -161,27 +184,7 @@ bot.recognizer(qnaRecognizer);
 bot.recognizer(recognizer);
 bot.dialog('/', intents);
 
-bot.use({
-    botbuilder: function (session, next) {
-        console.log("bot use middleware.");
-        //session
-        if (session.privateConversationData['inSlack'] == true) {
-            //send message to slack
-            var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
-            if (success == true) {
-                session.message['text'] = "";
-            } else {
-                session.privateConversationData['inSlack'] = false;
-                session.privateConversationData['slackId'] = null;
-                session.send("Connection closed, small-ka will serve you");
-            }
-            next();
-        } else {
-            next();
-        }
-       
-    }
-})
+
 
 
 

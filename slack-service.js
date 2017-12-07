@@ -9,7 +9,9 @@ var headers = {
 };
 
 const rebeccaId =  'U37FD759Q';
-const travelAgentBot = 'U888XALDB'
+//bot, rinat, ping
+const travelAgentBot = 'U888XALDB,U0AHUG221,U0AHPTW91'
+
 
 function option(path, method){
     this.host = "slack.com";

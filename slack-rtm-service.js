@@ -36,7 +36,13 @@ module.exports = {
                             //to slack
                         } else {
                             //to TA via chatbot
-                            session.send(msg.text);
+                            if (session.privateConversationData['onlySlack']== true && msg.text != 'handoff') {
+                                session.send(msg.text);
+                            }
+                            if (msg.text == 'handoff') {
+                                session.privateConversationData['onlySlack']=true
+                            }
+                            
                         }
                         break;
                     case 'user_typing':
