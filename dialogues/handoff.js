@@ -3,16 +3,19 @@ var Slack_rtm = require('../slack-rtm-service');
 
 exports.toSlack = [
     function(session, args, next) {
+        if (args != null) {
+            session.dialogData.confirmedRoom = args.choosedRoom;
+            session.dialogData.silent = args.silent == null ? false : args.silent;
+        }
+       
         if (args != null && args.text != null) {
             if (args.text != '') {
                 var message = new global._builder.Message(session);
                 message.text(args.text);
                 session.send(message);
             }
-            session.dialogData.confirmedRoom = args.choosedRoom;
-            session.dialogData.silent = args.silent == null ? false : args.silent;
             next({response: true});
-        } else {
+        } else if (session.dialogData.silent != true) {
             var message = new global._builder.Message(session);
             message.text("您确定要转到人工吗？这将会需要一些等待时间");
             message.suggestedActions(global._builder.SuggestedActions.create(session,
@@ -90,7 +93,7 @@ exports.toSlack = [
                 
             }
         } else {
-            session.endDialog("小卡将继续为您服务，如需联系客服请随时说 转人工");
+            session.endDialog("小卡将继续为您服务");
         }
     },
     function (session, result) {

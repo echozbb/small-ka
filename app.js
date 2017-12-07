@@ -138,6 +138,7 @@ bot.on('receive', function(args) {
         } else {
             //connect to slack
             session.beginDialog('handoff',{text:'',silent: true});
+            slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
             next();
         }
        
