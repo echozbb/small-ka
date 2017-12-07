@@ -32,6 +32,7 @@ exports.showOptionalHotels = [
         session.sendTyping();
         Hotel.searchHotel(multiRequest,startIndex).catch(e => {
             global._logger.log('info','chooseHotel.searchHotel', e);
+            session.privateConversationData['onlySlack'] = true;
             session.beginDialog('handoff',{text:'对不起，无法为您找到酒店,将为您转到人工服务'});
         }).then(function(object, reject){
             var quotes = object.quotes;
@@ -89,6 +90,7 @@ exports.showOptionalHotels = [
                 } else {
                     // var message = new global._builder.Message(session);
                     // message.text("对不起，我不知道您的意思，如需帮助，请说 帮助");
+                    session.privateConversationData['onlySlack'] = true;
                     session.beginDialog('handoff',{text:'对不起，我不知道您的意思,将为您转到人工服务'});
                 //     message.suggestedActions(global._builder.SuggestedActions.create(session,
                 //        [

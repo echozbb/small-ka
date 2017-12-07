@@ -123,13 +123,13 @@ bot.on('receive', function(args) {
     botbuilder: function (session, next) {
         console.log("bot use middleware.");
         //session
-        if (session.privateConversationData['inSlack'] == true) {
+        if (session.privateConversationData.slackId != null) {
             //send message to slack
            var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
             if (success == true) {
                 if (session.privateConversationData['onlySlack'] == true) session.message['text'] = "";
             } else {
-                session.beginDialog('handoff',{text:'',silent: true});
+                session.beginDialog('handoff',{text:''});
                 // session.privateConversationData['inSlack'] = false;
                 // session.privateConversationData['slackId'] = null;
                 // session.send("Connection closed, small-ka will serve you");

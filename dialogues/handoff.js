@@ -1,11 +1,12 @@
 var Slack = require('../slack-service');
 var Slack_rtm = require('../slack-rtm-service');
+var randomstring = require("randomstring"); 
 
 exports.toSlack = [
     function(session, args, next) {
+        session.dialogData.silent = session.privateConversationData['onlySlack'] == true ? false : true;
         if (args != null) {
             session.dialogData.confirmedRoom = args.choosedRoom;
-            session.dialogData.silent = args.silent == null ? false : args.silent;
         }
        
         if (args != null && args.text != null) {
@@ -34,8 +35,10 @@ exports.toSlack = [
             next({response: true});
         } else if (result.response) {
             console.log("connecting to slack....");
-            var gpName = session.userData.savedAddress.id
-            gpName = 'sk_' + gpName.substring(0, 9);
+            //var gpName = session.userData.savedAddress.id
+            var gpName = 'sk_' + randomstring.generate(18).toLowerCase();
+            console.log('group name is : ' + gpName);
+            //gpName = 'sk_' + gpName.substring(0, 9);
             //TODO:
             //session.privateConversationData.slackId="G8963FMBK"
             var slackId = session.privateConversationData.slackId;

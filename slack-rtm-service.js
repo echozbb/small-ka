@@ -36,12 +36,16 @@ module.exports = {
                             //to slack
                         } else {
                             //to TA via chatbot
-                            if (session.privateConversationData['onlySlack']== true && msg.text != 'handoff') {
-                                session.send(msg.text);
+                            if (msg.text.startsWith('say:')) {
+                                var text = msg.text.substring(0,4);
+                                session.send(text);
                             }
-                            if (msg.text == 'handoff') {
-                                session.privateConversationData['onlySlack']=true
-                            }
+                            // if (session.privateConversationData['onlySlack']== true && msg.text != 'handoff') {
+                            //     session.send(msg.text);
+                            // }
+                            // if (msg.text == 'handoff') {
+                            //     session.privateConversationData['onlySlack']=true
+                            // }
                             
                         }
                         break;

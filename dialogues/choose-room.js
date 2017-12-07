@@ -83,6 +83,7 @@ exports.chooseRoom = [
                 session.sendTyping();
                 Hotel.getRoomTypes(session.privateConversationData.hotelRequest.hotelUuid, multiRequest).catch(e => {
                     global._logger.log('info','chooseRoom.getRoomTypes', e);
+                    session.privateConversationData['onlySlack'] = true;
                     session.beginDialog('handoff',{text:'对不起，无法找到合适房间, 将为您转到人工服务'});
                     //session.send("no_rooms_found")
                 }).then(function (rooms, reject) {
@@ -293,10 +294,12 @@ exports.confirmRoom = [
     },
     function (session, results) {
          if (results.resumed) {
+            session.privateConversationData['onlySlack'] = true;
             session.beginDialog('handoff',{text:'对不起，小卡不明白您的意思,将为您转到人工服务'});
          } else if (results.response == true) {
              if (session.dialogData.confirmedRoom.onRequest == true) {
                  //on request
+                 session.privateConversationData['onlySlack'] = true;
                  session.beginDialog('handoff',{text:'将为您转到人工服务进行确认，请稍等', choosedRoom: session.dialogData.confirmedRoom, silent: false});
              } else {
                 //start booking

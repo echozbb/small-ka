@@ -34,6 +34,7 @@ exports.askCity = [
                 global._logger.log('info','askCity',err);
                 // session.send('invalid_city');
                 // session.replaceDialog('askForCity');
+                session.privateConversationData['onlySlack'] = true;
                 session.beginDialog('handoff',{text:'对不起，小卡不认识这个地方,将为您转到人工服务'});
             })
             .then(result => {

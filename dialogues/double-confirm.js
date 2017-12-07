@@ -163,6 +163,7 @@ exports.doubleConfirm = [
                             } 
                             else {
                                 //session.send('对不起，我不知道您说的什么意思。');
+                                session.privateConversationData['onlySlack'] = true;
                                 session.beginDialog('handoff',{text:'对不起，我不知道您说的什么意思,将为您转到人工服务'});
                                 next({response:true});
                             }
