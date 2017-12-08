@@ -7,6 +7,7 @@ module.exports  = {
         var message = session.message.text;
         var originalRequest = {}
         var confilictItems = []
+        var updatedItems = []
         if (session.privateConversationData.hotelRequest != null) {
             var origStr = JSON.stringify(session.privateConversationData.hotelRequest);
             originalRequest = JSON.parse(origStr);
@@ -54,6 +55,13 @@ module.exports  = {
             for (var i = 0; i < allDates.length; i++) {
                 message = Utils.removeMatchedEntity(message, allDates[i].startIndex, allDates[i].endIndex);
             }
+
+            if (originalRequest.fromDate != session.privateConversationData.hotelRequest.fromDate) {
+                updatedItems.push({field:'为您更新入住时间为',text: session.privateConversationData.hotelRequest.fromDate});
+            }
+            if (originalRequest.toDate != session.privateConversationData.hotelRequest.toDate) {
+                updatedItems.push({field:'为您更新退房时间为',text: session.privateConversationData.hotelRequest.toDate});
+            }
         }
 
 
@@ -79,6 +87,9 @@ module.exports  = {
                 } else {
                     session.privateConversationData.hotelRequest[singleItems[i]] = aItem[0].value;
                 }
+            }
+            if (session.privateConversationData.hotelRequest[singleItems[i]] != originalRequest[singleItems[i]]) {
+                updatedItems.push({field: aItem[0].name,text: session.privateConversationData.hotelRequest[singleItems[i]]});
             }
         }
         
@@ -159,6 +170,7 @@ module.exports  = {
                 session.privateConversationData.hotelRequest.preferredLocation = null;
                 session.privateConversationData.hotelRequest.latitude = null;
                 session.privateConversationData.hotelRequest.longitude = null;
+                updatedItems.push({field:'为您更新城市为',text: session.privateConversationData.hotelRequest.cityName});
             }
         }
        
@@ -239,11 +251,33 @@ module.exports  = {
             // }
             message = Utils.removeMatchedEntity(message, sortTypeEntity.startIndex, sortTypeEntity.endIndex).replace(/最/g,'#');;
         }
+        var missingItem = []
+        var confilictItems = []
+        var changeItem = global._builder.EntityRecognizer.findAllEntities(entities, 'changeItem');
+        if (changeItem != null && changeItem.length > 0) {
+            for (var i=0; i < changeItem.length; i ++) {
+                var item = changeItem[i].resolution.values[0];
+                if (missingItem.indexOf(item) < 0) {
+                    if (item == 'DATE' 
+                        && (session.privateConversationData.hotelReques.fromDate == null && session.privateConversationData.hotelReques.toDate == null)) {
+                        missingItem.push({field:item, text:'入住及退房时间'});
+                    } 
+                    if (item == 'CITY' && session.privateConversationData.hotelReques.cityCode == null) {
+                        missingItem.push({field:item, text: '城市'});
+                    }
+                    if (item == 'HOTEL' && session.privateConversationData.hotelRequest.hotelName == null ) {
+                        missingItem.push({field:item, text: '酒店'});
+                    }
 
+                }
+                message = Utils.removeMatchedEntity(message, changeItem[i].startIndex, changeItem[i].endIndex).replace(/换/g,'#');
+            }
+        }
         var finalText = Utils.escapeInput(message);
         if (session.privateConversationData.hotelRequest.hotelUuid == null && session.privateConversationData.hotelRequest.hotelName == null && finalText.length >= 2) {
             session.privateConversationData.hotelRequest.hotelName = finalText
         }
+        return {updatedItems:updatedItems, missingItems: missingItem};
     },
     
 }

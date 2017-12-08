@@ -6,6 +6,7 @@ exports.chooseRoom = [
         var dateOffSet = args == null || args.dateOffSet == null ? 0 : args.dateOffSet;
         session.dialogData.dateOffSet = dateOffSet
         if (dateOffSet == 1) {
+            var message = new global._builder.Message(session);
             message.text("需要小卡为您查询前后5天的酒店吗？");
             message.suggestedActions(global._builder.SuggestedActions.create(session,
                 [

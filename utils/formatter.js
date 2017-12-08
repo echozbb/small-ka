@@ -2,13 +2,13 @@ var dateFormat = require('dateformat');
 var Utils = require('./utils');
 const numDescRegExp = "位|个|对";
 const searchItemRegExp = [
-    {field: "adultNum", regExp: "大|人|成人"},
-    {field: "childNum", regExp: "小"},
-    {field: "couple",   regExp: "夫妻|couple|情侣"},
-    {field: "adOrch",   regExp: numDescRegExp},
-    {field: "star",     regExp: "星"},
-    {field: "rooms",  regExp: "间"},
-    {field: "nights",   regExp: "晚|night"}
+    {field: "adultNum", regExp: "大|人|成人", name: "成人数"},
+    {field: "childNum", regExp: "小", name: "儿童数"},
+    {field: "couple",   regExp: "夫妻|couple|情侣", name: "成人数"},
+    {field: "adOrch",   regExp: numDescRegExp, name: ""},
+    {field: "star",     regExp: "星", name: "星级"},
+    {field: "rooms",  regExp: "间", name: "房间数"},
+    {field: "nights",   regExp: "晚|night", name: "晚数"}
 
 ];
 
@@ -121,7 +121,7 @@ module.exports = {
                         field = 'adultNum';
                     }
                     if (num != null) {
-                        results.push({field: field, value: parseInt(num), startIndex: searchItem[i].startIndex, endIndex: searchItem[i].endIndex});
+                        results.push({field: field, value: parseInt(num), startIndex: searchItem[i].startIndex, endIndex: searchItem[i].endIndex, name: searchItemRegExp[j].name});
                         global._logger.log('info','formatter.getSearchItem', 'addedItem:' + searchItem[i].entity);
                     }
                 }

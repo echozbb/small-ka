@@ -112,6 +112,15 @@ module.exports = {
                 resolve(JSON.parse(date));
             })
         });
+    },
+    closeConversation: function (channelName) {
+        return new Promise (function (resolve) {
+            var path = url_join("/api/conversations.close", '?channel=' + channelName);
+             Post(path, null, function (date) {
+                console.log(JSON.stringify(date));
+                resolve(JSON.parse(date));
+            })
+        });
     }
     
     // sendUserMessage: function (channelId, message) {

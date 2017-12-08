@@ -1,5 +1,6 @@
 var Utils = require('../utils/utils');
 var Hotel = require('../hotel-service');
+var FillRequest = require('../utils/fill-request');
 
 exports.updateByIntents = [
     function (session, args, next) {
@@ -22,7 +23,33 @@ exports.updateByIntents = [
             session.replaceDialog('RequestHotel',{'repeat': session.privateConversationData.hotelRequest, 'steps': session.dialogData.steps});
         } else {
             if (session.dialogData.args.intent.entities.length > 0) {
-                var object = Utils.updateEntities(global._builder, session.dialogData.args.intent.entities, session);
+
+                var changeItem = global._builder.EntityRecognizer.findAllEntities(session.dialogData.args.intent.entities, 'changeItem');
+                if (session.privateConversationData.hotelRequest == null) {
+                    session.privateConversationData.hotelRequest = {};
+                }
+                if (changeItem != null && changeItem.length > 0) {
+                    for (var i=0; i < changeItem.length; i ++) {
+                        var item = changeItem[i].resolution.values[0];
+                        if (item == 'DATE' ) {
+                                session.privateConversationData.hotelReques.fromDate = null;
+                                session.privateConversationData.hotelReques.toDate = null;
+                            //missingItem.push({field:item, text:'入住及退房时间'});
+                        } 
+                        if (item == 'CITY') {
+                            session.privateConversationData.hotelReques.cityCode = null
+                        }
+                        if (item == 'HOTEL'  ) {
+                            session.privateConversationData.hotelRequest.hotelName = null;
+                            session.privateConversationData.hotelRequest.hotelUuid = null;
+                        }
+                    }
+                }
+
+
+
+                var object = FillRequest.fillRequest(session, session.dialogData.args.intent.entities);
+                //var object = Utils.updateEntities(global._builder, session.dialogData.args.intent.entities, session);
                 var updatedItems = object.updatedItems;
                 if (updatedItems.length > 0) {
                     //var message = new global._builder.Message(session);
