@@ -133,12 +133,12 @@ exports.askGuestName = [
             session.replaceDialog('askGuestName', {'rooms': session.dialogData.rooms});
         } else {
             var guestName = results.response.replace(/，/g,',').trim();
-            if (/^[a-zA-Z]+$/.test(guestName.replace(/,/g,'').replace(/ /g,'')) != true) {
+            if (/^[a-zA-Z]+$/.test(guestName.replace(/\./g,'').replace(/ /g,'')) != true) {
                 //session.send("input_guest_name");
                 session.replaceDialog('askGuestName', {'rooms': session.dialogData.rooms});
             } else {
                 session.dialogData.guestName = guestName;
-                var names = guestName.split(",");
+                var names = guestName.split(".");
                 if (names.length != session.dialogData.rooms) {
                     session.send('请输入每间房的客人名字');
                     session.replaceDialog('askGuestName', {'rooms': session.dialogData.rooms});
@@ -154,7 +154,7 @@ exports.askGuestName = [
     },
     function (session, results) {
         if (results.response == true) {
-            var guests = session.dialogData.guestName.split(',');
+            var guests = session.dialogData.guestName.split('.');
             var questions = [];
             for (var i = 0; i < guests.length; i++) {
                 questions.push({field: guests[i], prompt: "请问" + guests[i] + "是女士还是先生？"});
