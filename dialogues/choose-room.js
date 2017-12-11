@@ -14,20 +14,19 @@ exports.chooseRoom = [
                     global._builder.CardAction.imBack(session, "不好", "不好"),
                 ]
             ));
-
-            global._builder.Prompts.confirm(message);
+            global._builder.Prompts.confirm(session, message);
         } else {
             next ({response: true});
         }
     },
     function (session, args) {
         if (args.response == false) {
-            session.endDialog('请选择其他酒店');
             session.privateConversationData.hotelRequest.hotelUuid = null;
             session.privateConversationData.hotelRequest.hotelName = null;
             session.privateConversationData.hotelRequest.minStar = null;
             session.privateConversationData.hotelRequest.maxStar = null;
             session.privateConversationData.hotelRequest.possibleHotelName = null;
+            session.endDialog('请选择其他酒店');   
         } else {
 
             global._logger.log('info', 'ChooseRoom', session.privateConversationData.hotelRequest.hotelUuid);
@@ -156,7 +155,6 @@ exports.confirmRoom = [
     function (session, args, next) {
         //get room details
         console.log("Choosed room no." + args);
-        //var choosedRoom = session.dialogData.roomChoice[results.response.entity];
         var data = JSON.parse(args.data);
         var choosedRoom = data.room;
         session.dialogData.choosedRoom = choosedRoom;
@@ -310,9 +308,10 @@ exports.confirmRoom = [
              }
          } else {
              //this.buildRoomOption(session.dialogData.roomChoice, null);   
-             var message = "请重新选择:"
+             //var message = "请重新选择:"
+             session.endDialog('请重新选择房型或说换个酒店来选择其他酒店')
              //global._builder.Prompts.choice(session, message, session.dialogData.roomChoice, global._builder.ListStyle.list);
-             session.replaceDialog('confirmRoom', {'choice': session.dialogData.roomChoice, 'multiRequest': session.dialogData.multiRequest})
+             //session.replaceDialog('confirmRoom', {'choice': session.dialogData.confirmedRoom, 'multiRequest': session.dialogData.multiRequest})
          }
      }
 ]

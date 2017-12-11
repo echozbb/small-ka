@@ -129,7 +129,7 @@ bot.on('receive', function(args) {
             if (success == true) {
                 if (session.privateConversationData['onlySlack'] == true) session.message['text'] = "";
             } else {
-                session.beginDialog('handoff',{text:''});
+                if (process.env.ENABLE_SLACK != 'false') session.beginDialog('handoff',{text:''});
                 // session.privateConversationData['inSlack'] = false;
                 // session.privateConversationData['slackId'] = null;
                 // session.send("Connection closed, small-ka will serve you");
@@ -184,8 +184,6 @@ global._partten.noIntentPattern = noIntentPattern;
 bot.recognizer(qnaRecognizer);
 bot.recognizer(recognizer);
 bot.dialog('/', intents);
-
-
 
 
 

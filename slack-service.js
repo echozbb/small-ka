@@ -22,34 +22,38 @@ function option(path, method){
 }
 
  function Post(path, resquestBody, cb) {
-    if (!/token/i.test(path)) {
-        var path = url_join(path, '&token=' + process.env.SLACK_ECHO_TOKEN )
-    }
-   
-    var options = new option(path, 'POST');
-    //jsonObject = JSON.stringify(resquestBody);
-    var reqPost = https.request(options, function(res){
-        global._logger.log('info', "slack-service.Post", {'Path': options.path});
-        global._logger.log('info', "slack-service.Post", {'Status': res.statusCode});
-        res.setEncoding('utf8');
-        var data='';
-        res.on('data', function (chunk) {
-            data += chunk;
-        });
-        
-        res.on('end',function(){
-            cb(data);
-        });
-
-        if (res.statusCode != 200) {
-            cb("{payload: null}");
+    if (process.env.ENABLE_SLACK == 'false') {
+        cb('{"payload": null}');
+    } else {
+        if (!/token/i.test(path)) {
+            var path = url_join(path, '&token=' + process.env.SLACK_ECHO_TOKEN )
         }
-
-    });
-    reqPost.end();
-    reqPost.on('error', function(e){
-        global._logger.log('error', "slack-service.Post", e);
-    });                
+       
+        var options = new option(path, 'POST');
+        //jsonObject = JSON.stringify(resquestBody);
+        var reqPost = https.request(options, function(res){
+            global._logger.log('info', "slack-service.Post", {'Path': options.path});
+            global._logger.log('info', "slack-service.Post", {'Status': res.statusCode});
+            res.setEncoding('utf8');
+            var data='';
+            res.on('data', function (chunk) {
+                data += chunk;
+            });
+            
+            res.on('end',function(){
+                cb(data);
+            });
+    
+            if (res.statusCode != 200) {
+                cb("{payload: null}");
+            }
+    
+        });
+        reqPost.end();
+        reqPost.on('error', function(e){
+            global._logger.log('error', "slack-service.Post", e);
+        });               
+    }
 }
 module.exports = {
     rtmConnect: function (){

@@ -67,7 +67,7 @@ exports.updateByIntents = [
                     var text = "";
                     for (var i=0; i< missingItems.length; i++) {
                         if (i > 0) text += ", ";
-                        if (missingItems[i].field = 'CITY') {
+                        if (missingItems[i].field == 'CITY') {
                             session.privateConversationData.hotelRequest.cityCode = null;
                             session.privateConversationData.hotelRequest.cityEntity = null;
                             session.privateConversationData.hotelRequest.preferredLocation = null;
