@@ -37,12 +37,16 @@ module.exports = {
                                     }
                                     break;
                                 case 'message':
-                                    if (msg.reply_to == 1) {
+                                    console.log('message type is message');
+                                    if (msg.reply_to != null) {
+                                        console.log("this message is sent to slack.")
                                         //to slack
                                     } else {
                                         //to TA via chatbot
+                                        console.log('this message is sent to bot.');
                                         if (msg.text != null && msg.text.startsWith('say:')) {
                                             var text = msg.text.substring(4,msg.text.length);
+                                            console.log('message to bot -> ' + text + " | session -> " + session);
                                             session.send(text);
                                         }
                                     }

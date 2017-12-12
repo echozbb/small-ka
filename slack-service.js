@@ -117,9 +117,9 @@ module.exports = {
             })
         });
     },
-    closeConversation: function (channelName) {
+    archiveConversation: function (channelId) {
         return new Promise (function (resolve) {
-            var path = url_join("/api/conversations.close", '?channel=' + channelName);
+            var path = url_join("/api/conversations.archive", '?channel=' + channelId);
              Post(path, null, function (date) {
                 console.log(JSON.stringify(date));
                 resolve(JSON.parse(date));

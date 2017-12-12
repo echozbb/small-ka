@@ -63,6 +63,16 @@ exports.toSlack = [
                                 if (gpName == data.channels[i].name) {
                                     session.privateConversationData.slackId=data.channels[i].id;
                                     found = true;
+                                } else {
+                                    //remove 
+                                    if (data.channels[i].name.startsWith('sk_') && data.channels[i].is_archived == false) {
+                                        var today = new Date();
+                                        //archive 2 days ago conversation
+                                        var twoDaysAgo = new Date(today.getTime() + 2*24*60*60*1000)
+                                        if (data.channel[i].created >= twoDaysAgo.getTime()){
+                                            Slack.archiveConversation(data.channels[i].id).catch(e => console.log(e));
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -91,9 +101,7 @@ exports.toSlack = [
                     } else {
                         next({response: true});
                     }
-
                 })
-                
             }
         } else {
             session.endDialog("小卡将继续为您服务");
