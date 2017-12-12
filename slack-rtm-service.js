@@ -26,13 +26,15 @@ module.exports = {
                                 case 'hello': 
                                     console.log("Connected sucessful!");
                                     //send init message
-                                    var msg = {
-                                        "id": session.privateConversationData.messageId++,
-                                        "type": "message",
-                                        "channel": session.privateConversationData.slackId,
-                                        "text": session.dialogData.message
-                                    };
-                                    connection.sendUTF(JSON.stringify(msg));
+                                    if (session.dialogData != null && session.dialogData.message != null) {
+                                        var msg = {
+                                            "id": session.privateConversationData.messageId++,
+                                            "type": "message",
+                                            "channel": session.privateConversationData.slackId,
+                                            "text": session.dialogData.message
+                                        };
+                                        connection.sendUTF(JSON.stringify(msg));
+                                    }
                                     break;
                                 case 'message':
                                     if (msg.reply_to == 1) {
