@@ -75,15 +75,18 @@ module.exports  = {
             }).filter((obj, pos, arr) => {
                 return arr.map(mapObj => mapObj['value']).indexOf(obj['value']) === pos;
             });
-            if (aItem.length == 1) {
+            if (aItem.length == 1 || singleItems[i] == 'adOrch') {
                 if (singleItems[i] == 'adOrch') {
-                    //check key words after
-                    var key = message.substring(aItem[0].endIndex, aItem[0].endIndex + 3);
-                    if (/人|成/.test(key)) {
-                        session.privateConversationData.hotelRequest['adultNum'] = aItem[0].value;
-                    } else if (/儿|童/.test(key)) {
-                        session.privateConversationData.hotelRequest['childNum'] = aItem[0].value;
+                    for (var j = 0; j < aItem.length; j++ ){
+                        //check key words after
+                        var key = message.substring(aItem[j].endIndex, aItem[j].endIndex + 3);
+                        if (/人|成/.test(key)) {
+                            session.privateConversationData.hotelRequest['adultNum'] = aItem[j].value;
+                        } else if (/儿|童/.test(key)) {
+                            session.privateConversationData.hotelRequest['childNum'] = aItem[j].value;
+                        }
                     }
+                    
                 } else {
                     session.privateConversationData.hotelRequest[singleItems[i]] = aItem[0].value;
                 }

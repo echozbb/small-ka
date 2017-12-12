@@ -1,6 +1,6 @@
 var dateFormat = require('dateformat');
 var Utils = require('./utils');
-const numDescRegExp = "位|个|对";
+const numDescRegExp = "位|个|对|名";
 const searchItemRegExp = [
     {field: "adultNum", regExp: "大|人|成人", name: "成人数"},
     {field: "childNum", regExp: "小", name: "儿童数"},
