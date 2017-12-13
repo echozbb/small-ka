@@ -68,8 +68,8 @@ exports.toSlack = [
                                     if (data.channels[i].name.startsWith('sk_') && data.channels[i].is_archived == false) {
                                         var today = new Date();
                                         //archive 2 days ago conversation
-                                        var twoDaysAgo = new Date(today.getTime() + 2*24*60*60*1000)
-                                        if (data.channel[i].created >= twoDaysAgo.getTime()){
+                                        var twoDaysAgo = new Date(today.getTime() - 2*24*60*60*1000)
+                                        if (parseInt(data.channels[i].created) * 1000 <= twoDaysAgo.getTime()){
                                             Slack.archiveConversation(data.channels[i].id).catch(e => console.log(e));
                                         }
                                     }
