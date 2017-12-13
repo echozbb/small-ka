@@ -19,10 +19,12 @@ exports.requestHotel = [
             disableInput = true;
         }
         var result = Validator.validateRequest(session.privateConversationData.hotelRequest);
-        session.privateConversationData.hotelRequest = result.hotelRequest;
-        if (disableInput == false) {
-            //process the input text directly
-            result.inputText = session.message.text;
+        if (result != null) {
+            session.privateConversationData.hotelRequest = result.hotelRequest;
+            if (disableInput == false) {
+                //process the input text directly
+                result.inputText = session.message.text;
+            }
         }
         session.beginDialog('doubleConfirm', result);
        
