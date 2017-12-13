@@ -57,7 +57,7 @@ module.exports = {
                                             if (session.privateConversationData.slackId != msg.channel) {
                                                 var ss = global._chanelSessionMap[msg.channel];
                                                 console.log('sending message to ss -> ' + ss);
-                                                if (ss != null) ss.sen(text)
+                                                if (ss != null) ss.send(text)
                                             } else {
                                                 session.send(text);
                                             }
