@@ -39,7 +39,9 @@ module.exports = {
                                 case 'message':
                                     console.log('message type is message');
                                     if (session.privateConversationData.slackId != msg.channel) {
-                                        console.log('The message is for channel ' + session.privateConversationData.slackId);
+                                        console.log("current channel in privateConversationData is " + session.privateConversationData.slackId);
+                                        console.log("message from channel " + msg.channel);
+                                        //console.log('The message is for channel ' + session.privateConversationData.slackId);
                                     } else if (msg.reply_to != null) {
                                         console.log("this message is sent to slack.")
                                         //to slack
