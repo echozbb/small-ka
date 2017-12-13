@@ -17,7 +17,7 @@ module.exports = {
             
                         connection.on('message', function(message) {
                             //session.userData.savedAddress.user['inSlack'] = true;
-                            session.privateConversationData['inSlack'] = true;
+                            //session.privateConversationData['inSlack'] = true;
                             if (message.type === 'utf8') {
                                 console.log("Received: '" + message.utf8Data + "'");
                             }
@@ -38,11 +38,14 @@ module.exports = {
                                     break;
                                 case 'message':
                                     console.log('message type is message');
-                                    if (session.privateConversationData.slackId != msg.channel) {
-                                        console.log("current channel in privateConversationData is " + session.privateConversationData.slackId);
-                                        console.log("message from channel " + msg.channel);
-                                        //console.log('The message is for channel ' + session.privateConversationData.slackId);
-                                    } else if (msg.reply_to != null) {
+                                    // if (session.privateConversationData.slackId != msg.channel) {
+                                    //     console.log("current channel in privateConversationData is " + session.privateConversationData.slackId);
+                                    //     console.log("message from channel " + msg.channel);
+                                    //     var ss = global._chanelSessionMap[session.privateConversationData.slackId];
+                                    //     ss.sen(text)
+                                    //     //console.log('The message is for channel ' + session.privateConversationData.slackId);
+                                    // }  
+                                    if (msg.reply_to != null) {
                                         console.log("this message is sent to slack.")
                                         //to slack
                                     } else {
@@ -51,7 +54,16 @@ module.exports = {
                                         if (msg.text != null && msg.text.startsWith('say:')) {
                                             var text = msg.text.substring(4,msg.text.length);
                                             console.log('message to bot -> ' + text + " | session -> " + session);
-                                            session.send(text);
+                                            if (session.privateConversationData.slackId != msg.channel) {
+                                                var ss = global._chanelSessionMap[msg.channel];
+                                                console.log('sending message to ss -> ' + ss);
+                                                if (ss != null) ss.sen(text)
+                                            } else {
+                                                session.send(text);
+                                            }
+
+
+                                            
                                         }
                                     }
                                     break;

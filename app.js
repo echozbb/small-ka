@@ -108,6 +108,7 @@ var bot = new builder.UniversalBot(connector, {
 
 //send proactive message if no reply from user
 global._timeoutobject = {}
+global._chanelSessionMap = {};
 bot.on('receive', function(args) {
     global._logger.log('info', "incoming text: ", {'text': args.text, 'user':  args.address,'time': args.timestamp});
     var userAddress = args.address;
@@ -124,11 +125,14 @@ bot.on('receive', function(args) {
         console.log("bot use middleware.");
         //session
         if (session.privateConversationData.slackId != null) {
+            global._chanelSessionMap[session.privateConversationData.slackId] = session;
+            console.log('slack id is ' + session.privateConversationData.slackId + ', reuse current connection.');
             //send message to slack
            var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
             if (success == true) {
                 if (session.privateConversationData['onlySlack'] == true) session.message['text'] = "";
             } else {
+                //session.privateConversationData['slackId'] = null;
                 if (process.env.ENABLE_SLACK != 'false') session.beginDialog('handoff',{text:''});
                 // session.privateConversationData['inSlack'] = false;
                 // session.privateConversationData['slackId'] = null;
@@ -138,8 +142,10 @@ bot.on('receive', function(args) {
         } else {
             //connect to slack
             if (process.env.ENABLE_SLACK != 'false') {
+                console.log('slack id is empty, create a new connection.');
                 session.beginDialog('handoff',{text:'',silent: true});
                 slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
+                global._chanelSessionMap[session.privateConversationData.slackId] = session;
             }
             next();
         }
