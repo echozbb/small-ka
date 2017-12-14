@@ -10,9 +10,10 @@ var headers = {
 
 const rebeccaId =  'U37FD759Q';
 //bot, rinat, ping
-const travelAgentBot = 'U888XALDB,U0AHUG221,U0AHPTW91'
+//const travelAgentBot = 'U888XALDB,U0AHUG221,U0AHPTW91'
+const travelAgentBot = 'U888XALDB,U0CAW5B7H';
 //bot, john
-const testInviteUser = 'U888XALDB,U0CAW5B7H'
+const testInviteUser = 'U888XALDB,U0CAW5B7H';
 
 
 function option(path, method){
