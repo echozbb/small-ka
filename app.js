@@ -123,11 +123,10 @@ bot.on('receive', function(args) {
 }).use({
     botbuilder: function (session, next) {
         console.log("bot use middleware.");
-        if (session.message.address != null 
-            && (session.message.address.user.id == 'testuser' || session.message.address.user.id == 'default-user')) {
-                session.privateConversationData.isTest = true;
+        if (session.message.address != null && session.message.address.user.id == 'user') {
+                session.privateConversationData.isTest = false;
         } else {
-            session.privateConversationData.isTest = false;
+            session.privateConversationData.isTest = true;
         }
         
         
