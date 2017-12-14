@@ -87,7 +87,8 @@ exports.toSlack = [
                                 console.log("connect to agent success.")
                                 channelId = data.channel['id'];
                                 session.privateConversationData.slackId = channelId
-                                Slack.inviteUser(channelId).catch(e => console.log(e)).then(function (data) {
+                                var isTest  = session.privateConversationData.isTest;
+                                Slack.inviteUser(channelId, isTest).catch(e => console.log(e)).then(function (data) {
                                     if (data.ok == false) {
                                         console.log("Invite user failed.");
                                         next({response: false});

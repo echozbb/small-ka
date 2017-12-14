@@ -123,6 +123,14 @@ bot.on('receive', function(args) {
 }).use({
     botbuilder: function (session, next) {
         console.log("bot use middleware.");
+        if (session.message.address != null 
+            && (session.message.address.user.id == 'testuser' || session.message.address.user.id == 'default-user')) {
+                session.privateConversationData.isTest = true;
+        } else {
+            session.privateConversationData.isTest = false;
+        }
+        
+        
         //session
         if (session.privateConversationData.slackId != null) {
             global._chanelSessionMap[session.privateConversationData.slackId] = session;

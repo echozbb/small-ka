@@ -11,6 +11,8 @@ var headers = {
 const rebeccaId =  'U37FD759Q';
 //bot, rinat, ping
 const travelAgentBot = 'U888XALDB,U0AHUG221,U0AHPTW91'
+//bot, john
+const testInviteUser = 'U888XALDB,U0CAW5B7H'
 
 
 function option(path, method){
@@ -88,10 +90,15 @@ module.exports = {
         });
     },
 
-    inviteUser: function (channelId) {
+    inviteUser: function (channelId, isTest) {
         return new Promise (function (resolve) {
             //var path = url_join("/api/channels.invite", '?channel=' + channelId, "&pretty=1", '&user='+travelAgentBot);
-            var path = url_join("/api/conversations.invite", '?channel=' + channelId, "&pretty=1", '&users='+travelAgentBot);
+            var path = null
+            if (isTest) {
+                path = url_join("/api/conversations.invite", '?channel=' + channelId, "&pretty=1", '&users='+testInviteUser);
+            } else {
+                path = url_join("/api/conversations.invite", '?channel=' + channelId, "&pretty=1", '&users='+travelAgentBot);
+            }
             Post(path, null, function (data) {
                 console.log(JSON.stringify(data));
                 resolve(JSON.parse(data));
