@@ -123,38 +123,41 @@ bot.on('receive', function(args) {
 }).use({
     botbuilder: function (session, next) {
         console.log("********* bot use middleware." + session.message.address.user.id);
-        if (session.message.address != null && session.message.address.user.id == 'user') {
+        if (session.message['text'] == null || session.message['text'] == '') {
+            next();
+        } else {
+            if (session.message.address != null && session.message.address.user.id == 'user') {
                 session.privateConversationData.isTest = false;
-        } else {
-            session.privateConversationData.isTest = true;
-        }
-        //session
-        if (session.privateConversationData.slackId != null) {
-            global._chanelSessionMap[session.privateConversationData.slackId] = session;
-            console.log('slack id is ' + session.privateConversationData.slackId + ', reuse current connection.');
-            //send message to slack
-           var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
-            if (success == true) {
-                if (session.privateConversationData['onlySlack'] == true) session.message['text'] = "";
             } else {
-                //session.privateConversationData['slackId'] = null;
-                if (process.env.ENABLE_SLACK != 'false') session.beginDialog('handoff',{text:''});
-                // session.privateConversationData['inSlack'] = false;
-                // session.privateConversationData['slackId'] = null;
-                // session.send("Connection closed, small-ka will serve you");
+                session.privateConversationData.isTest = true;
             }
-            next();
-        } else {
-            //connect to slack
-            if (process.env.ENABLE_SLACK != 'false') {
-                console.log('slack id is empty, create a new connection.');
-                session.beginDialog('handoff',{text:'',silent: true});
-                slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
+            //session
+            if (session.privateConversationData.slackId != null) {
                 global._chanelSessionMap[session.privateConversationData.slackId] = session;
+                console.log('slack id is ' + session.privateConversationData.slackId + ', reuse current connection.');
+                //send message to slack
+            var success = slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
+                if (success == true) {
+                    if (session.privateConversationData['onlySlack'] == true) session.message['text'] = "";
+                } else {
+                    //session.privateConversationData['slackId'] = null;
+                    if (process.env.ENABLE_SLACK != 'false') session.beginDialog('handoff',{text:''});
+                    // session.privateConversationData['inSlack'] = false;
+                    // session.privateConversationData['slackId'] = null;
+                    // session.send("Connection closed, small-ka will serve you");
+                }
+                next();
+            } else {
+                //connect to slack
+                if (process.env.ENABLE_SLACK != 'false') {
+                    console.log('slack id is empty, create a new connection.');
+                    session.beginDialog('handoff',{text:'',silent: true});
+                    slack_rtm.sendMessage(session.privateConversationData.messageId++,session.privateConversationData['slackId'],session.message['text']);
+                    global._chanelSessionMap[session.privateConversationData.slackId] = session;
+                }
+                next();
             }
-            next();
         }
-       
     }
 })
 
