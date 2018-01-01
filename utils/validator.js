@@ -3,9 +3,8 @@ var Utils = require('./utils');
 const mandatory_fields = [
     {field: 'fromDate',     missing: '入住时间',    rule: '%s != null',   desc: '%s入住'}, 
     {field: 'toDate',       missing: '退房时间',    rule: '%s != null',   desc: '%s退房'}, 
-    {field: 'cityName',     missing: '目的地',      rule: '%s != null ',  desc: '前往%s'}, 
-    {field: 'rooms',        missing: '房间数',      rule: '%s >0 ',       desc: '%s间房'},
-    {field: 'adultNum',     missing: '每间房人数',   rule: '%s >0 ',       desc: '每房%s位成人'}]
+    {field: 'cityName',     missing: '目的地',      rule: '%s != null ',  desc: '前往%s'}
+  ]
 
 const child_fields = [
     {field: 'childNum', missing: '儿童人数', rule: '%s >= 0', desc: '%s个小孩'},
@@ -19,6 +18,8 @@ const optional_fields = [
     {field: 'bedType',       missing: "床型",      desc: '需要%s', rule: ''},
     {field: 'hotelName',     missing: "酒店名称",   desc: '入住%s', rule: ''},
     {field: 'sortType',      missing: '',         desc: '', rule: ''},
+    {field: 'rooms',        missing: '房间数',      rule: '%s >0 ',       desc: '%s间房'},
+    {field: 'adultNum',     missing: '每间房人数',   rule: '%s >0 ',       desc: '每房%s位成人'}
 ]
 
 module.exports = {
@@ -149,7 +150,15 @@ module.exports = {
                     }
                     break;
                 default:
-                    global._logger.log('info','validator','unknown field ' + optional_fields[i].field);
+                    global._logger.log('info','validator','Default field rule ' + optional_fields[i].field);
+                    var rule = optional_fields[i].rule.replace(/%s/i, 'hotelRequest.' + [optional_fields[i].field]);
+                    global._logger.log('info','validator',optional_fields[i].field + ' rule: ' + rule);
+                    if (eval(rule) == false){
+                        missing.push({field: optional_fields[i].field, desc: optional_fields[i].missing});
+                        hotelRequest[optional_fields[i].field] = null;
+                    } else {
+                        filled.push(optional_fields[i].desc.replace(/\%s/i,hotelRequest[optional_fields[i].field]));
+                    }
             }
         }
 

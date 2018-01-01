@@ -617,10 +617,19 @@ module.exports = {
         var adultPerRoom = args.adultNum;
         if (args.adultPerRoom != null) {
             adultPerRoom = args.adultPerRoom;
+        } else {
+            //default 2 adult
+            adultPerRoom = 2;
         }
         //search hotels
         var roomGuest = [];
-        for (var i=0; i< args.rooms; i++) {
+        var rooms = args.rooms;
+        if (args.rooms == null) {
+            //default rooms;
+            rooms = 1;
+        } 
+        
+        for (var i=0; i< rooms; i++) {
             roomGuest.push({"adults":adultPerRoom,"children": (args.childNum == null ? 0 : args.childNum),
             "childrenAges":args.childAge});
         }
@@ -628,7 +637,7 @@ module.exports = {
             'arrival': this.formatDate(args.fromDate),
             'departure': this.formatDate(args.toDate),
             'currency': 'AUD',
-            'rooms': args.rooms,
+            'rooms': rooms,
             "locale": "zh_CN",
             "roomGuests":roomGuest,
             "freeBreakfast": args.freeBreakfast,
