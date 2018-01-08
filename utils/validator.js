@@ -151,14 +151,19 @@ module.exports = {
                     break;
                 default:
                     global._logger.log('info','validator','Default field rule ' + optional_fields[i].field);
-                    var rule = optional_fields[i].rule.replace(/%s/i, 'hotelRequest.' + [optional_fields[i].field]);
-                    global._logger.log('info','validator',optional_fields[i].field + ' rule: ' + rule);
-                    if (eval(rule) == false){
-                        missing.push({field: optional_fields[i].field, desc: optional_fields[i].missing});
-                        hotelRequest[optional_fields[i].field] = null;
+                    if (hotelRequest[optional_fields[i].field] == null) {
+                        global._logger.log('info','validator','field is null, ignore rule.');
                     } else {
-                        filled.push(optional_fields[i].desc.replace(/\%s/i,hotelRequest[optional_fields[i].field]));
+                        var rule = optional_fields[i].rule.replace(/%s/i, 'hotelRequest.' + [optional_fields[i].field]);
+                        global._logger.log('info','validator',optional_fields[i].field + ' rule: ' + rule);
+                        if (eval(rule) == false){
+                            missing.push({field: optional_fields[i].field, desc: optional_fields[i].missing});
+                            hotelRequest[optional_fields[i].field] = null;
+                        } else {
+                            filled.push(optional_fields[i].desc.replace(/\%s/i,hotelRequest[optional_fields[i].field]));
+                        }
                     }
+                    
             }
         }
 
